@@ -1,6 +1,6 @@
 {
     "name": "@frasermcc/discord-commander",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "description": "Command framework for discord.js, build for typescript.",
     "main": "build/index.js",
     "scripts": {
