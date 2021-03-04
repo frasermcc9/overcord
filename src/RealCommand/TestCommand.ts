@@ -5,12 +5,12 @@ import IntegerType from "../types/integer";
 
 export default class TestCommand extends Command {
     @Argument({ type: new BooleanType() })
-    number!: boolean;
+    someBoolean!: boolean;
     @Argument({ type: new IntegerType(), validate: (n) => n < 50 })
-    notArg!: number;
+    someNumber!: number;
 
-    commandShouldInvoke(message: string) {
-        return true;
+    commandShouldInvoke(command: string) {
+        return ["test", "experiment", "testing"].includes(command);
     }
 
     execute() {

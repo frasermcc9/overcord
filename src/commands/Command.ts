@@ -6,7 +6,7 @@ export default abstract class DiscordCommand {
     constructor() {}
 
     public readonly handle = ({ fragments, message }: { fragments: string[]; message: Message }): void => {
-        if (!this.commandShouldInvoke(fragments[0])) return;
+        if (!this.commandShouldInvoke(fragments[0].toLocaleLowerCase())) return;
         const issue = setArguments(this, ...fragments.slice(1));
         if (issue) return this.error(message, issue);
         this.execute();
