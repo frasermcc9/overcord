@@ -1,0 +1,25 @@
+{
+    "name": "@frasermcc/discord-commander",
+    "version": "1.0.0",
+    "description": "Command framework for discord.js, build for typescript.",
+    "main": "build/index.js",
+    "scripts": {
+        "start": "run-p watch daemon",
+        "watch": "tsc --watch",
+        "daemon": "nodemon",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@frasermcc/log": "^1.0.0",
+        "discord.js": "^12.5.1",
+        "reflect-metadata": "^0.1.13"
+    },
+    "devDependencies": {
+        "@types/node": "^14.14.31",
+        "nodemon": "^2.0.7",
+        "npm-run-all": "^4.1.5"
+    }
+}
