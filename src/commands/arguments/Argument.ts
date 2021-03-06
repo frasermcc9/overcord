@@ -44,13 +44,17 @@ export function clearArguments(origin: { [k: string]: any }): void {
     }
 }
 
-export function setArguments(origin: { [k: string]: any }, message: Message, ...props: string[]): string | undefined {
+export async function setArguments(
+    origin: { [k: string]: any },
+    message: Message,
+    ...props: string[]
+): Promise<string | undefined> {
     const properties: CommandArgumentMetadata<any>[] = Reflect.getMetadata(metadataKey, origin);
     for (let index = 0; index < properties?.length ?? 0; index++) {
         const key = properties[index];
         const newProp = props[index];
 
-        if (!(key.settings.type?.validate(newProp, message) ?? true)) {
+        if (!((await key.settings.type?.validate(newProp, message)) ?? true)) {
             return `Cannot use '${newProp}' as a ${key.settings.type?.id} type.`;
         }
 

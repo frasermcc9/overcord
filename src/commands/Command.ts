@@ -8,13 +8,13 @@ import { PermissionManager } from "./permissions/Permit";
 export default abstract class AbstractCommand {
     constructor() {}
 
-    public readonly handle = ({
+    public readonly handle = async ({
         fragments,
         message,
         aliasManager,
         inhibitor,
         permissionManager,
-    }: CommandHandlerArgs): void => {
+    }: CommandHandlerArgs): Promise<void> => {
         const shouldExecute = this.internalCommandShouldExecute(message, fragments, aliasManager);
         if (!shouldExecute) return;
 
@@ -28,12 +28,12 @@ export default abstract class AbstractCommand {
         const shouldInhibit = this.internalCommandShouldInhibit(message, inhibitor);
         if (shouldInhibit) return this.error(message, "Command inhibited");
 
-        const argumentErrors = setArguments(this, message, ...fragments.slice(1));
+        const argumentErrors = await setArguments(this, message, ...fragments.slice(1));
         if (argumentErrors) return this.error(message, argumentErrors);
 
-        this.execute(message);
-
-        this.internalCommandDidExecute();
+        this.execute(message)
+            .then(() => this.internalCommandDidExecute())
+            .catch((e) => this.error(message, e?.toString()));
     };
 
     private readonly internalCommandShouldInhibit = (message: Message, inhibitor?: CommandInhibitor) => {
@@ -82,9 +82,12 @@ export default abstract class AbstractCommand {
 
     protected commandDidExecute() {}
 
-    abstract execute(message: Message): any;
+    abstract execute(message: Message): Promise<any>;
 
     protected error(sourceMessage: Message, issue: string): any {
+        sourceMessage.channel.send(
+            `There was an error when running this command. The specific problem is as follows: \`\`\` Error: ${issue}\`\`\``
+        );
         Log.warn(issue);
     }
 }

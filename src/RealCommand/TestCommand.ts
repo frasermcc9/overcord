@@ -19,7 +19,7 @@ export default class TestCommand extends Command {
     @Argument({ type: new UnionType(new IntegerType(), new FloatType()) })
     someNumber!: number;
 
-    execute(message: Message) {
+    async execute(message: Message) {
         console.log(`Executed! Args: ${this.someBoolean} ${this.someInteger} ${this.someNumber} `);
     }
 }
