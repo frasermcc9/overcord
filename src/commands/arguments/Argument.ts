@@ -1,10 +1,13 @@
 import "reflect-metadata";
-import ArgumentType from "../types/base";
+import ArgumentType from "../../types/base";
 import Log from "@frasermcc/log";
+import { Message } from "discord.js";
 
 const metadataKey = Symbol("CommandArgument");
 
-export default function Argument<T>(settings?: ArgumentArgs<T>): (target: { [k: string]: any }, propertyKey: string) => void {
+export default function Argument<T>(
+    settings?: ArgumentArgs<T>
+): (target: { [k: string]: any }, propertyKey: string) => void {
     return function registerArgument(target: object, propertyKey: string): void {
         let properties: CommandArgumentMetadata<T>[] = Reflect.getMetadata(metadataKey, target);
 
@@ -39,13 +42,13 @@ export function clearArguments(origin: { [k: string]: any }): void {
     }
 }
 
-export function setArguments(origin: { [k: string]: any }, ...props: string[]): string | undefined {
+export function setArguments(origin: { [k: string]: any }, message: Message, ...props: string[]): string | undefined {
     const properties: CommandArgumentMetadata<any>[] = Reflect.getMetadata(metadataKey, origin);
     for (let index = 0; index < properties.length; index++) {
         const key = properties[index];
         const newProp = props[index];
 
-        if (!(key.settings.type?.validate(newProp) ?? true)) {
+        if (!(key.settings.type?.validate(newProp, message) ?? true)) {
             return `Cannot use '${newProp}' as a ${key.settings.type?.id} type.`;
         }
 
@@ -53,7 +56,7 @@ export function setArguments(origin: { [k: string]: any }, ...props: string[]): 
             return `Cannot use '${newProp}' as it fails the validation ${key.settings.validate}.`;
         }
 
-        const parsed = key.settings.type?.parse(newProp);
+        const parsed = key.settings.type?.parse(newProp, message);
         origin[key.name] = parsed;
     }
     return;
