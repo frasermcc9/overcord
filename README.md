@@ -8,13 +8,15 @@ maintaining a clean codebase. Additionally, this framework is built for
 decorators to help with writing less verbose code.
 
 ## Planned Features
-- Hooks with methods that give control over commands
-- Argument parsing and validation
-- Argument typing system
-- Per-guild prefixes
-- Command invoking from non-command-message events
-- Bundled commands
-- Command inhibiting
+- [ ] Decorators and hooks to give advanced control over commands.
+- [ ] Argument parsing and validation
+- [ ] Argument typing system
+- [ ] Per-guild prefixes
+- [ ] Command invoking from non-command-message events
+- [ ] Bundled commands
+- [x] Command inhibiting
+- [x] Union types
+- [x] Command Permissions
 
 ## Current Usage
 
@@ -35,7 +37,7 @@ export default class TestCommand extends Command {
     }
 
     execute() {
-        console.log(`Executed! Args: ${this.number} ${this.notArg}`);
+        console.log(`Executed! Args: ${this.someNumber} ${this.someBoolean}`);
     }
 }
 ```
