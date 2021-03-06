@@ -82,7 +82,7 @@ export default abstract class AbstractCommand {
 
     protected commandDidExecute() {}
 
-    abstract execute(sourceMessage: Message): any;
+    abstract execute(message: Message): any;
 
     protected error(sourceMessage: Message, issue: string): any {
         Log.warn(issue);

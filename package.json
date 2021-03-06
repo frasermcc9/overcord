@@ -1,6 +1,6 @@
 {
-    "name": "@frasermcc/discord-commander",
-    "version": "0.0.1",
+    "name": "@frasermcc/overcord",
+    "version": "0.0.1-beta.2",
     "description": "Command framework for discord.js, build for typescript.",
     "main": "build/index.js",
     "scripts": {
@@ -9,8 +9,14 @@
         "daemon": "nodemon",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "keywords": [],
-    "author": "",
+    "keywords": [
+        "discord",
+        "commands",
+        "command",
+        "bot",
+        "typescript"
+    ],
+    "author": "Fraser McCallum",
     "license": "ISC",
     "dependencies": {
         "@frasermcc/log": "^1.0.0",
@@ -21,5 +27,9 @@
         "@types/node": "^14.14.31",
         "nodemon": "^2.0.7",
         "npm-run-all": "^4.1.5"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/frasermcc9/overcord.git"
     }
 }

@@ -35,6 +35,8 @@ export function getArguments(origin: { [k: string]: any }): object {
 
 export function clearArguments(origin: { [k: string]: any }): void {
     const properties: CommandArgumentMetadata<any>[] = Reflect.getMetadata(metadataKey, origin);
+    if (!properties) return;
+
     for (const key of properties) {
         if (Object.prototype.hasOwnProperty.call(origin, key.name)) {
             origin[key.name] = undefined;
@@ -44,7 +46,7 @@ export function clearArguments(origin: { [k: string]: any }): void {
 
 export function setArguments(origin: { [k: string]: any }, message: Message, ...props: string[]): string | undefined {
     const properties: CommandArgumentMetadata<any>[] = Reflect.getMetadata(metadataKey, origin);
-    for (let index = 0; index < properties.length; index++) {
+    for (let index = 0; index < properties?.length ?? 0; index++) {
         const key = properties[index];
         const newProp = props[index];
 
