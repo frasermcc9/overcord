@@ -86,7 +86,7 @@ export default abstract class AbstractCommand {
 
     protected error(sourceMessage: Message, issue: string): any {
         sourceMessage.channel.send(
-            `There was an error when running this command. The specific problem is as follows: \`\`\` Error: ${issue}\`\`\``
+            `There was an error when running this command. The specific problem is as follows: \`\`\`Error: ${issue}\`\`\``
         );
         Log.warn(issue);
     }

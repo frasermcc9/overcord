@@ -2,6 +2,7 @@ import "reflect-metadata";
 import ArgumentType from "../../types/base";
 import Log from "@frasermcc/log";
 import { Message } from "discord.js";
+import { join } from "path";
 
 const metadataKey = Symbol("CommandArgument");
 
@@ -49,7 +50,15 @@ export async function setArguments(
     message: Message,
     ...props: string[]
 ): Promise<string | undefined> {
-    const properties: CommandArgumentMetadata<any>[] = Reflect.getMetadata(metadataKey, origin);
+    const properties: CommandArgumentMetadata<any>[] | undefined = Reflect.getMetadata(metadataKey, origin);
+
+    if (!properties) return;
+
+    if (props.length < properties.length) {
+        const argHelp = properties.map((v) => ` - ${v.name}: ${v.settings.type?.id}`).join("\n ");
+        return `Incorrect usage.\n${argHelp}`;
+    }
+
     for (let index = 0; index < properties?.length ?? 0; index++) {
         const key = properties[index];
         const newProp = props[index];
