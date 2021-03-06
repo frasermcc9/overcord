@@ -11,7 +11,7 @@ decorators to help with writing less verbose code.
 - [ ] Decorators and hooks to give advanced control over commands.
 - [ ] Argument parsing and validation
 - [ ] Argument typing system
-- [ ] Per-guild prefixes
+- [x] Per-guild prefixes
 - [ ] Command invoking from non-command-message events
 - [ ] Bundled commands
 - [x] Command inhibiting

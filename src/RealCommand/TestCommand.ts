@@ -3,11 +3,8 @@ import Argument from "../commands/arguments/Argument";
 import Alias from "../commands/alias/Alias";
 import Command from "../commands/Command";
 import Inhibit from "../commands/inhibitor/Inhibit";
-import BooleanType from "../types/boolean";
-import FloatType from "../types/float";
-import IntegerType from "../types/integer";
-import UnionType from "../types/union";
 import Permit from "../commands/permissions/Permit";
+import { BooleanType, IntegerType, UnionType, FloatType } from "../types";
 
 @Inhibit({ limitBy: "USER", maxUsesPerPeriod: 3, periodDuration: 10 })
 @Alias("hello", "test")
