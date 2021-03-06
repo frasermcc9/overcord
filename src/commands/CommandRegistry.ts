@@ -1,10 +1,12 @@
 import Log from "@frasermcc/log";
 import { Message } from "discord.js";
 import { resolve, sep } from "path";
-import CommandInhibitor from "../inhibitor/CommandInhibitor";
-import { getInhibitor } from "../inhibitor/Inhibit";
+import CommandInhibitor from "./inhibitor/CommandInhibitor";
+import { getInhibitor } from "./inhibitor/Inhibit";
+import { AliasManager, getAliases } from "./alias/Alias";
 import AbstractCommand from "./Command";
 import Command from "./Command";
+import { getPermissions, PermissionManager } from "./permissions/Permit";
 const { readdir } = require("fs").promises;
 
 export class CommandRegistry {
@@ -21,9 +23,12 @@ export class CommandRegistry {
     executeCommand(args: { fragments: string[]; message: Message }) {
         this.commandMap.forEach((group) => {
             for (const command of group) {
-                const shouldInhibit = command.inhibitor.commandShouldInhibit(args.message);
-                if (shouldInhibit) return Log.warn("Inhibiting command...");
-                const cmd = new command.cmdConstructor().handle(args);
+                const cmd = new command.cmdConstructor().handle({
+                    ...args,
+                    inhibitor: command.inhibitor,
+                    aliasManager: command.aliases,
+                    permissionManager: command.permissionManager,
+                });
             }
         });
     }
@@ -62,8 +67,20 @@ export class CommandRegistry {
                         if (commandMap.get(root) === undefined) {
                             commandMap.set(root, []);
                         }
-                        const inhibitor = getInhibitor(required)[0];
-                        commandMap.get(root)?.push({ cmdConstructor: required, inhibitor: new CommandInhibitor(inhibitor) });
+                        const inhibitorMetadata = getInhibitor(required);
+                        const aliasesMetadata = getAliases(required);
+                        const permissionMetadata = getPermissions(required);
+
+                        const inhibitor = inhibitorMetadata?.length > 0 ? inhibitorMetadata[0] : undefined;
+                        const aliases = aliasesMetadata?.length > 0 ? aliasesMetadata[0] : undefined;
+                        const permissions = permissionMetadata?.length > 0 ? permissionMetadata[0] : undefined;
+
+                        commandMap.get(root)?.push({
+                            cmdConstructor: required,
+                            inhibitor: inhibitor ? new CommandInhibitor(inhibitor) : undefined,
+                            aliases: aliases ? new AliasManager(aliases) : undefined,
+                            permissionManager: permissions ? new PermissionManager(permissions) : undefined,
+                        });
                     }
                 }
             } catch (e) {
@@ -84,5 +101,7 @@ interface CommandConstructor {
 
 interface StatefulCommand {
     cmdConstructor: CommandConstructor;
-    inhibitor: CommandInhibitor;
+    inhibitor?: CommandInhibitor;
+    aliases?: AliasManager;
+    permissionManager?: PermissionManager;
 }
