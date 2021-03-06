@@ -1,7 +1,7 @@
 import { GuildChannel, Message } from "discord.js";
 import ArgumentType from "./base";
 
-export default class ChannelArgumentType extends ArgumentType<GuildChannel> {
+export default class ChannelType extends ArgumentType<GuildChannel> {
     get id(): string {
         return "Guild Channel";
     }
