@@ -1,11 +1,14 @@
+import Log from "@frasermcc/log";
 import { Message } from "discord.js";
 import { resolve, sep } from "path";
-import DiscordCommand from "./Command";
+import CommandInhibitor from "../inhibitor/CommandInhibitor";
+import { getInhibitor } from "../inhibitor/Inhibit";
+import AbstractCommand from "./Command";
 import Command from "./Command";
 const { readdir } = require("fs").promises;
 
 export class CommandRegistry {
-    private _commandMap = new Map<string, CommandConstructor[]>();
+    private _commandMap = new Map<string, StatefulCommand[]>();
 
     constructor() {}
 
@@ -13,8 +16,16 @@ export class CommandRegistry {
         this._commandMap = await this.getCommands(dir);
     }
 
+    async recursivelyRegisterEvents(dir: string) {}
+
     executeCommand(args: { fragments: string[]; message: Message }) {
-        this._commandMap.forEach((group) => group.forEach((cmd) => new cmd().handle(args)));
+        this.commandMap.forEach((group) => {
+            for (const command of group) {
+                const shouldInhibit = command.inhibitor.commandShouldInhibit(args.message);
+                if (shouldInhibit) return Log.warn("Inhibiting command...");
+                const cmd = new command.cmdConstructor().handle(args);
+            }
+        });
     }
 
     private async *getFiles(dir: string): AsyncGenerator<[string, string], any, void> {
@@ -29,8 +40,8 @@ export class CommandRegistry {
         }
     }
 
-    private async getCommands(directory: string): Promise<Map<string, CommandConstructor[]>> {
-        const commandMap = new Map<string, CommandConstructor[]>();
+    private async getCommands(directory: string): Promise<Map<string, StatefulCommand[]>> {
+        const commandMap = new Map<string, StatefulCommand[]>();
         for await (const file of this.getFiles(directory)) {
             try {
                 if (/^(?!.*(d)\.ts$).*\.(ts|js)$/.test(file[0])) {
@@ -51,7 +62,8 @@ export class CommandRegistry {
                         if (commandMap.get(root) === undefined) {
                             commandMap.set(root, []);
                         }
-                        commandMap.get(root)?.push(required);
+                        const inhibitor = getInhibitor(required)[0];
+                        commandMap.get(root)?.push({ cmdConstructor: required, inhibitor: new CommandInhibitor(inhibitor) });
                     }
                 }
             } catch (e) {
@@ -60,8 +72,17 @@ export class CommandRegistry {
         }
         return commandMap;
     }
+
+    get commandMap() {
+        return this._commandMap;
+    }
 }
 
 interface CommandConstructor {
-    new (): DiscordCommand;
+    new (): AbstractCommand;
+}
+
+interface StatefulCommand {
+    cmdConstructor: CommandConstructor;
+    inhibitor: CommandInhibitor;
 }
