@@ -1,6 +1,6 @@
 # Overcord
 
-[![NPM](https://nodei.co/npm/<package>.png)](https://npmjs.org/package/@frasermcc/overcord)
+[![npm version](https://badge.fury.io/js/%40frasermcc%2Fovercord.svg)](https://badge.fury.io/js/%40frasermcc%2Fovercord)
 ## About
 Overcord is a command framework for [discord.js](https://discord.js.org/#/). The
 goal is to make it easier to create bots with powerful commands whilst
