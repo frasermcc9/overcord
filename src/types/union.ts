@@ -1,3 +1,4 @@
+import { Message } from "discord.js";
 import ArgumentType from "./base";
 
 export default class UnionType extends ArgumentType<any> {
@@ -16,19 +17,19 @@ export default class UnionType extends ArgumentType<any> {
         return `(${this.types.map((t) => t.id).join(" or ")})`;
     }
 
-    validate(val: string) {
+    validate(val: string, msg: Message) {
         for (const type of this.types) {
-            if (type.validate(val)) {
+            if (type.validate(val, msg)) {
                 return true;
             }
         }
         return false;
     }
 
-    parse(val: string) {
+    parse(val: string, msg: Message) {
         for (const type of this.types) {
-            if (type.validate(val)) {
-                return type.parse(val);
+            if (type.validate(val, msg)) {
+                return type.parse(val, msg);
             }
         }
         throw new RangeError(`Provided argument ${val} cannot be assigned to one of the required types: ${this.id}.`);
