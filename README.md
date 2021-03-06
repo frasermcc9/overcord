@@ -18,35 +18,64 @@ decorators to help with writing less verbose code.
 - [x] Command inhibiting
 - [x] Union types
 - [x] Command Permissions
+- [ ] Command Groups
 
 ## Current Usage
 
+### Initial Setup
 ```ts
-import Argument from "../annotations/Argument";
-import Command from "../commands/Command";
-import BooleanType from "../types/boolean";
-import IntegerType from "../types/integer";
+import { Client } from "@frasermcc/discord-commander";
+import path from "path";
 
+(async () => {
+    const client = new Client({ defaultCommandPrefix: "%", owners: [], disableMentions: "everyone" });
+    await client.registry.recursivelyRegisterCommands(path.join(__dirname, "/commands"));
+    client.login("YOUR_TOKEN");
+})();
+```
+
+Use `recursivelyRegisterCommands` to register all commands in a directory. Add
+some commands, and this is all you need to bootstrap a bot.
+
+
+### Creating a command
+
+```ts
+import { Message } from "discord.js";
+import Argument from "../commands/arguments/Argument";
+import Alias from "../commands/alias/Alias";
+import Command from "../commands/Command";
+import Inhibit from "../commands/inhibitor/Inhibit";
+import Permit from "../commands/permissions/Permit";
+import { BooleanType, IntegerType, UnionType, FloatType } from "../types";
+
+@Alias("hello", "test")
+@Inhibit({ limitBy: "USER", maxUsesPerPeriod: 3, periodDuration: 10 })
+@Permit("ADMINISTRATOR")
 export default class TestCommand extends Command {
     @Argument({ type: new BooleanType() })
     someBoolean!: boolean;
+
     @Argument({ type: new IntegerType(), validate: (n) => n < 50 })
+    someInteger!: number;
+
+    @Argument({ type: new UnionType(new IntegerType(), new FloatType()) })
     someNumber!: number;
 
-    commandShouldInvoke(command: string) {
-        return ["test", "experiment", "testing"].includes(command);
-    }
-
-    execute() {
-        console.log(`Executed! Args: ${this.someNumber} ${this.someBoolean}`);
+    execute(message: Message) {
+        console.log(`Executed! Args: ${this.someBoolean} ${this.someInteger} ${this.someNumber} `);
     }
 }
 ```
-Arguments that can be passed to the command from a users message are declared with the `@Argument()` decorator. This command will fire when `commandShouldInvoke` returns true. If so, then `execute` will fire.
+For most cases, commands can use `@Decorators` to set command parameters. For
+more advanced usage, the `Command` class exposes several hooks giving more
+direct control over the commands.
 
-For example, if a user types `!test true 35`, then `someBoolean` will have the value `true` and `someNumber` will have the value `35`.
+In the above example, we have a command that is executed when `hello` or `test` is sent. The command is inhibited, such that a user can only use it 3 times, allowing them to use the command again 10 seconds after each execution. Only users with Administrator permissions can use the command.
+
+Our command has three arguments, meaning when a user who types `!hello true 35 0.15`, the execute command will be run, with `someBoolean = true`, `someInteger = 35`, and `someNumber = 0.15`. Arguments can be normal types, discord types (i.e. members, channels), or one of several types.
 
 ### Expected Output:
 ```
-Executed! Args: 35 true
+Executed! Args: true 35 0.15
 ```
