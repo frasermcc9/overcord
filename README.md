@@ -1,28 +1,28 @@
 # Overcord
 
 [![npm version](https://badge.fury.io/js/%40frasermcc%2Fovercord.svg)](https://badge.fury.io/js/%40frasermcc%2Fovercord)
-## About
+# About
 Overcord is a command framework for [discord.js](https://discord.js.org/#/). The
 goal is to make it easier to create bots with powerful commands whilst
 maintaining a clean codebase. Additionally, this framework is built for
 [TypeScript](https://www.typescriptlang.org/), using modern features like
 decorators to help with writing less verbose code.
 
-## Planned Features
+# Planned Features
 - [ ] Decorators and hooks to give advanced control over commands.
 - [ ] Argument parsing and validation
 - [ ] Argument typing system
 - [x] Per-guild prefixes
-- [ ] Command invoking from non-command-message events
+- [x] Command invoking from non-command-message events
 - [ ] Bundled commands
 - [x] Command inhibiting
 - [x] Union types
 - [x] Command Permissions
 - [ ] Command Groups
 
-## Current Usage
+# Current Usage
 
-### Initial Setup
+## Initial Setup
 ```ts
 import { Client } from "@frasermcc/discord-commander";
 import path from "path";
@@ -38,7 +38,7 @@ Use `recursivelyRegisterCommands` to register all commands in a directory. Add
 some commands, and this is all you need to bootstrap a bot.
 
 
-### Creating a command
+## Creating a command
 
 ```ts
 import { Message } from "discord.js";
@@ -78,4 +78,20 @@ Our command has three arguments, meaning when a user who types `!hello true 35 0
 ### Expected Output:
 ```
 Executed! Args: true 35 0.15
+```
+
+## Creating Other Events
+You can easily create events to listen to other commands as well.
+
+```ts
+import DiscordEvent from "../events/BaseEvent";
+
+const TestEvent: DiscordEvent<"guildMemberAdd"> = {
+    callback: (member) => {
+        console.log(`Say hi to ${member.user.username}!`);
+    },
+    firesOn: "guildMemberAdd",
+};
+
+export default TestEvent;
 ```
