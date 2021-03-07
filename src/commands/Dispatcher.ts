@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import Client from "../Client";
+import Client from "../client/Client";
 import { CommandRegistry } from "./CommandRegistry";
 
 export default class Dispatcher {
@@ -13,7 +13,7 @@ export default class Dispatcher {
 
     handleRawMessage(message: Message) {
         const content = message.content.trim();
-        const prefix = this.client.getPrefixForGuild(message.guild);
+        const prefix = this.client.guildSettingsManager.getPrefixForGuild(message.guild);
         if (!content.startsWith(prefix)) {
             return;
         }
