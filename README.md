@@ -9,16 +9,16 @@ maintaining a clean codebase. Additionally, this framework is built for
 decorators to help with writing less verbose code.
 
 # Planned Features
-- [ ] Decorators and hooks to give advanced control over commands.
-- [ ] Argument parsing and validation
-- [ ] Argument typing system
+- [x] Decorators and hooks to give advanced control over commands.
+- [x] Argument parsing and validation
+- [x] Argument typing system
 - [x] Per-guild prefixes
 - [x] Command invoking from non-command-message events
 - [ ] Bundled commands
 - [x] Command inhibiting
 - [x] Union types
 - [x] Command Permissions
-- [ ] Command Groups
+- [x] Command Groups
 
 # Current Usage
 
