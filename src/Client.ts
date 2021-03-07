@@ -17,7 +17,7 @@ export default class Client extends BaseClient {
     constructor(options: Options) {
         super(options);
 
-        this._registry = new CommandRegistry();
+        this._registry = new CommandRegistry(this);
         this._dispatcher = new Dispatcher(this, this.registry);
 
         options.defaultCommandPrefix ??= "!";

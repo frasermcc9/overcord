@@ -13,6 +13,7 @@ export { Client, Command, Permit, Inhibit, Alias, Argument };
 // (async () => {
 //     const client = new Client({ defaultCommandPrefix: "%", owners: [] });
 //     await client.registry.recursivelyRegisterCommands(path.join(__dirname, "./RealCommand"));
+//     await client.registry.recursivelyRegisterEvents(path.join(__dirname, "./RealCommand"));
 
 //     //@ts-ignore
 //     client.emit("message", {
@@ -29,6 +30,6 @@ export { Client, Command, Permit, Inhibit, Alias, Argument };
 //     //@ts-ignore
 //     client.emit("message", { content: "%test yes 45 12", author: { id: "123455" } });
 
-//     // const cmd = new TestCommand(); console.log(getArguments(cmd));
-//     // console.log(cmd);
+//     const cmd = new TestCommand(); console.log(getArguments(cmd));
+//     console.log(cmd);
 // })();

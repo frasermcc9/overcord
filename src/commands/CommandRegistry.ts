@@ -7,18 +7,23 @@ import { AliasManager, getAliases } from "./alias/Alias";
 import AbstractCommand from "./Command";
 import Command from "./Command";
 import { getPermissions, PermissionManager } from "./permissions/Permit";
+import DiscordEvent from "../events/BaseEvent";
+import Client from "../Client";
 const { readdir } = require("fs").promises;
 
 export class CommandRegistry {
     private _commandMap = new Map<string, StatefulCommand[]>();
+    private _eventMap = new Map<string, DiscordEvent<any>[]>();
 
-    constructor() {}
+    constructor(private readonly client: Client) {}
 
     async recursivelyRegisterCommands(dir: string) {
         this._commandMap = await this.getCommands(dir);
     }
 
-    async recursivelyRegisterEvents(dir: string) {}
+    async recursivelyRegisterEvents(dir: string) {
+        this._eventMap = await this.getEvents(dir);
+    }
 
     executeCommand(args: { fragments: string[]; message: Message }) {
         this.commandMap.forEach((group) => {
@@ -90,6 +95,34 @@ export class CommandRegistry {
         return commandMap;
     }
 
+    private async getEvents(directory: string): Promise<Map<string, DiscordEvent<any>[]>> {
+        const eventMap = new Map<string, DiscordEvent<any>[]>();
+        for await (const file of this.getFiles(directory)) {
+            try {
+                if (/^(?!.*(d)\.ts$).*\.(ts|js)$/.test(file[0])) {
+                    const root =
+                        file[1]
+                            .replace(directory, "")
+                            .split(sep)
+                            .filter((f) => !!f)[0] ?? "base";
+
+                    const required: DiscordEvent<any> = require(file[0]).default;
+                    if (typeof required === "object" && required.callback && required.firesOn) {
+                        // add the constructor to the map
+                        if (eventMap.get(root) === undefined) {
+                            eventMap.set(root, []);
+                        }
+                        this.client.on(required.firesOn, required.callback);
+                        eventMap.get(root)?.push(required);
+                    }
+                }
+            } catch (e) {
+                console.log(`Error: ${e}`);
+            }
+        }
+        return eventMap;
+    }
+
     get commandMap() {
         return this._commandMap;
     }
@@ -98,7 +131,6 @@ export class CommandRegistry {
 interface CommandConstructor {
     new (): AbstractCommand;
 }
-
 interface StatefulCommand {
     cmdConstructor: CommandConstructor;
     inhibitor?: CommandInhibitor;

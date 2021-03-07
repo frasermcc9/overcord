@@ -1,3 +1,10 @@
-import AbstractEvent from "../events/BaseEvent";
+import DiscordEvent from "../events/BaseEvent";
 
-export default class TestEvent extends AbstractEvent {}
+const TestEvent: DiscordEvent<"guildMemberAdd"> = {
+    callback: (member) => {
+        console.log(`Say hi to ${member.user.username}!`);
+    },
+    firesOn: "guildMemberAdd",
+};
+
+export default TestEvent;
