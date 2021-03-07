@@ -6,7 +6,7 @@ export default class ChannelType extends ArgumentType<GuildChannel> {
         return "Guild Channel";
     }
 
-    validate(val: string, msg: Message) {
+    validate(val: string, msg: Message): boolean {
         const matches = val.match(/^(?:<#)?([0-9]+)>?$/);
         if (matches) return msg.guild?.channels.cache.has(matches[1]) ?? false;
         const search = val.toLowerCase();
