@@ -4,11 +4,7 @@ import { Message } from "discord.js";
 export default abstract class ArgumentType<T> {
     abstract get id(): string;
 
-    validate(val: string, msg: Message): Promise<boolean> | boolean {
-        throw new Error(`${this.constructor.name} doesn't have a validate() method.`);
-    }
+    abstract validate(val: string, msg: Message): Promise<boolean> | boolean;
 
-    parse(val: string, msg: Message): T | null | undefined {
-        throw new Error(`${this.constructor.name} doesn't have a parse() method.`);
-    }
+    abstract parse(val: string, msg: Message): Promise<T> | T | null | undefined;
 }

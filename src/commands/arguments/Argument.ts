@@ -71,7 +71,7 @@ export async function setArguments(
             return `Cannot use '${newProp}' as it fails the validation ${key.settings.validate}.`;
         }
 
-        const parsed = key.settings.type?.parse(newProp, message);
+        const parsed = await key.settings.type?.parse(newProp, message);
         origin[key.name] = parsed;
     }
     return;
