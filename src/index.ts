@@ -7,7 +7,19 @@ import Inhibit from "./commands/inhibitor/Inhibit";
 import Alias from "./commands/alias/Alias";
 import Argument from "./commands/arguments/Argument";
 
-export { BooleanType, ChannelType, FloatType, IntegerType, MemberType, StringType, UnionType } from "./types/index";
+export {
+    BooleanType,
+    ChannelType,
+    FloatType,
+    IntegerType,
+    MemberType,
+    StringType,
+    UnionType,
+    RoleType,
+    TextChannelType,
+    UserType,
+    BaseType,
+} from "./types/index";
 export { Client, Command, Permit, Inhibit, Alias, Argument };
 
 // (async () => {
