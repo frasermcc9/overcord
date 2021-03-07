@@ -8,11 +8,16 @@ import AbstractCommand from "./Command";
 import Command from "./Command";
 import { getPermissions, PermissionManager } from "./permissions/Permit";
 import DiscordEvent from "../events/BaseEvent";
-import Client from "../Client";
+import Client from "../client/Client";
 const { readdir } = require("fs").promises;
 
 export class CommandRegistry {
-    private _commandMap = new Map<string, StatefulCommand[]>();
+    /**
+     * Command map containing the mapping from command names to the stateful
+     * command object. Each alias has its own entry. Aliases of the same command
+     * will point to the same StatefulCommand object.
+     */
+    private _commandMap = new Map<string, StatefulCommand>();
     private _eventMap = new Map<string, DiscordEvent<any>[]>();
 
     constructor(private readonly client: Client) {}
@@ -26,15 +31,23 @@ export class CommandRegistry {
     }
 
     executeCommand(args: { fragments: string[]; message: Message }) {
-        this.commandMap.forEach((group) => {
-            for (const command of group) {
-                const cmd = new command.cmdConstructor().handle({
-                    ...args,
-                    inhibitor: command.inhibitor,
-                    aliasManager: command.aliases,
-                    permissionManager: command.permissionManager,
-                });
+        const commandName = args.fragments[0].toLowerCase();
+        const statefulCommand = this._commandMap.get(commandName);
+        if (!statefulCommand) return;
+
+        const group = statefulCommand.group;
+        if (args.message.guild) {
+            if (!this.client.guildSettingsManager.groupIsEnabled(args.message.guild, group)) {
+                return;
             }
+        }
+
+        new statefulCommand.cmdConstructor().handle({
+            ...args,
+            inhibitor: statefulCommand.inhibitor,
+            aliasManager: statefulCommand.aliases,
+            permissionManager: statefulCommand.permissionManager,
+            client: this.client,
         });
     }
 
@@ -50,46 +63,61 @@ export class CommandRegistry {
         }
     }
 
-    private async getCommands(directory: string): Promise<Map<string, StatefulCommand[]>> {
-        const commandMap = new Map<string, StatefulCommand[]>();
+    private async getCommands(directory: string): Promise<Map<string, StatefulCommand>> {
+        const invalidFileFound = (file: string) =>
+            Log.warn(`Found file ${file} in command directory that is not a command.`);
+
+        const commandMap = new Map<string, StatefulCommand>();
         for await (const file of this.getFiles(directory)) {
             try {
-                if (/^(?!.*(d)\.ts$).*\.(ts|js)$/.test(file[0])) {
-                    const root =
-                        file[1]
-                            .replace(directory, "")
-                            .split(sep)
-                            .filter((f) => !!f)[0] ?? "base";
-
-                    const required: CommandConstructor = require(file[0]).default;
-                    if (typeof required === "function") {
-                        // check if object is a command when constructed
-                        const instance = new required();
-                        if (!(instance instanceof Command)) {
-                            continue;
-                        }
-                        // add the constructor to the map
-                        if (commandMap.get(root) === undefined) {
-                            commandMap.set(root, []);
-                        }
-                        const inhibitorMetadata = getInhibitor(required);
-                        const aliasesMetadata = getAliases(required);
-                        const permissionMetadata = getPermissions(required);
-
-                        const inhibitor = inhibitorMetadata?.length > 0 ? inhibitorMetadata[0] : undefined;
-                        const aliases = aliasesMetadata?.length > 0 ? aliasesMetadata[0] : undefined;
-                        const permissions = permissionMetadata?.length > 0 ? permissionMetadata[0] : undefined;
-
-                        commandMap.get(root)?.push({
-                            cmdConstructor: required,
-                            inhibitor: inhibitor ? new CommandInhibitor(inhibitor) : undefined,
-                            aliases: aliases ? new AliasManager(aliases) : undefined,
-                            permissionManager: permissions ? new PermissionManager(permissions) : undefined,
-                        });
-                    }
+                if (/^(?!.*(d)\.ts$).*\.(ts|js)$/.test(file[0]) !== true) {
+                    //invalidFileFound(file[0]);
+                    continue;
                 }
+                const root =
+                    file[1]
+                        .replace(directory, "")
+                        .split(sep)
+                        .filter((f) => !!f)[0] ?? "base";
+
+                const required: CommandConstructor = require(file[0]).default;
+                if (typeof required !== "function") {
+                    invalidFileFound(file[0]);
+                    continue;
+                }
+
+                const instance = new required();
+                if (!(instance instanceof Command)) {
+                    invalidFileFound(file[0]);
+                    continue;
+                }
+
+                const inhibitorMetadata = getInhibitor(required);
+                const aliasesMetadata = getAliases(required);
+                const permissionMetadata = getPermissions(required);
+
+                const inhibitor = inhibitorMetadata?.length > 0 ? inhibitorMetadata[0] : undefined;
+                const aliases = aliasesMetadata?.length > 0 ? aliasesMetadata[0] : undefined;
+                const permissions = permissionMetadata?.length > 0 ? permissionMetadata[0] : undefined;
+
+                const command: StatefulCommand = {
+                    cmdConstructor: required,
+                    inhibitor: inhibitor ? new CommandInhibitor(inhibitor) : undefined,
+                    aliases: aliases ? new AliasManager(aliases) : undefined,
+                    permissionManager: permissions ? new PermissionManager(permissions) : undefined,
+                    group: root,
+                };
+
+                aliases?.forEach((alias) => {
+                    alias = alias.toLowerCase();
+                    commandMap.has(alias) &&
+                        Log.critical(
+                            `Multiple commands exist with alias ${alias}. Please ensure all commands are uniquely named.`
+                        );
+                    commandMap.set(alias, command);
+                });
             } catch (e) {
-                console.log(`Error: ${e}`);
+                Log.error("Error when loading commands", "Command Registry", e);
             }
         }
         return commandMap;
@@ -126,6 +154,10 @@ export class CommandRegistry {
     get commandMap() {
         return this._commandMap;
     }
+
+    get commandGroups() {
+        return [...this._commandMap.keys()];
+    }
 }
 
 interface CommandConstructor {
@@ -136,4 +168,7 @@ interface StatefulCommand {
     inhibitor?: CommandInhibitor;
     aliases?: AliasManager;
     permissionManager?: PermissionManager;
+    group: string;
 }
+
+//TODO Create command group caching mechanism
