@@ -4,6 +4,7 @@ import { clearArguments, setArguments } from "./arguments/Argument";
 import CommandInhibitor from "./inhibitor/CommandInhibitor";
 import { AliasManager } from "./alias/Alias";
 import { PermissionManager } from "./permissions/Permit";
+import Client from "../client/Client";
 
 export default abstract class AbstractCommand {
     constructor() {}
@@ -14,6 +15,7 @@ export default abstract class AbstractCommand {
         aliasManager,
         inhibitor,
         permissionManager,
+        client,
     }: CommandHandlerArgs): Promise<void> => {
         const shouldExecute = this.internalCommandShouldExecute(message, fragments, aliasManager);
         if (!shouldExecute) return;
@@ -31,7 +33,7 @@ export default abstract class AbstractCommand {
         const argumentErrors = await setArguments(this, message, ...fragments.slice(1));
         if (argumentErrors) return this.error(message, argumentErrors);
 
-        this.execute(message)
+        this.execute(message, client)
             .then(() => this.internalCommandDidExecute())
             .catch((e) => this.error(message, e?.toString()));
     };
@@ -82,11 +84,17 @@ export default abstract class AbstractCommand {
 
     protected commandDidExecute() {}
 
-    abstract execute(message: Message): Promise<any>;
+    /**
+     *
+     * @param message
+     * @param client
+     * @abstract
+     */
+    abstract execute(message: Message, client: Client): Promise<any>;
 
     protected error(sourceMessage: Message, issue: string): any {
         sourceMessage.channel.send(
-            `There was an error when running this command. The specific problem is as follows: \`\`\`Error: ${issue}\`\`\``
+            `There was an error when running this command. The specific problem is as follows: \`\`\`${issue}\`\`\``
         );
         Log.warn(issue);
     }
@@ -95,6 +103,7 @@ export default abstract class AbstractCommand {
 interface CommandHandlerArgs {
     fragments: string[];
     message: Message;
+    client: Client;
     inhibitor?: CommandInhibitor;
     aliasManager?: AliasManager;
     permissionManager?: PermissionManager;

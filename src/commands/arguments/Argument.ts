@@ -56,7 +56,7 @@ export async function setArguments(
 
     if (props.length < properties.length) {
         const argHelp = properties.map((v) => ` - ${v.name}: ${v.settings.type?.id}`).join("\n ");
-        return `Incorrect usage.\n${argHelp}`;
+        return `Incorrect usage. Correct usage:\n(command)\n${argHelp}`;
     }
 
     for (let index = 0; index < properties?.length ?? 0; index++) {
