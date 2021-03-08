@@ -6,6 +6,7 @@ import Permit from "./commands/permissions/Permit";
 import Inhibit from "./commands/inhibitor/Inhibit";
 import Alias from "./commands/alias/Alias";
 import Argument from "./commands/arguments/Argument";
+import DiscordEvent from "./events/BaseEvent";
 
 export {
     BooleanType,
@@ -20,7 +21,7 @@ export {
     UserType,
     BaseType,
 } from "./types/index";
-export { Client, Command, Permit, Inhibit, Alias, Argument };
+export { Client, Command, Permit, Inhibit, Alias, Argument, DiscordEvent };
 
 // (async () => {
 //     const client = new Client({ defaultCommandPrefix: "%", owners: [] });

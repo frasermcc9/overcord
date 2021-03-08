@@ -41,13 +41,19 @@ some commands, and this is all you need to bootstrap a bot.
 ## Creating a command
 
 ```ts
+import {
+    Alias,
+    Inhibit,
+    Permit,
+    Command,
+    Argument,
+    BooleanType,
+    IntegerType,
+    UnionType,
+    FloatType,
+    Client,
+} from "@frasermcc/overcord";
 import { Message } from "discord.js";
-import Argument from "../commands/arguments/Argument";
-import Alias from "../commands/alias/Alias";
-import Command from "../commands/Command";
-import Inhibit from "../commands/inhibitor/Inhibit";
-import Permit from "../commands/permissions/Permit";
-import { BooleanType, IntegerType, UnionType, FloatType } from "../types";
 
 @Alias("hello", "test")
 @Inhibit({ limitBy: "USER", maxUsesPerPeriod: 3, periodDuration: 10 })
@@ -62,8 +68,10 @@ export default class TestCommand extends Command {
     @Argument({ type: new UnionType(new IntegerType(), new FloatType()) })
     someNumber!: number;
 
-    execute(message: Message) {
-        console.log(`Executed! Args: ${this.someBoolean} ${this.someInteger} ${this.someNumber} `);
+    async execute(message: Message, client: Client) {
+        console.log(
+            `Executed! Args: ${this.someBoolean} ${this.someInteger} ${this.someNumber} `
+        );
     }
 }
 ```
