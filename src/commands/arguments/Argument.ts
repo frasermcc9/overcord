@@ -48,27 +48,43 @@ export function clearArguments(origin: { [k: string]: any }): void {
 export async function setArguments(
     origin: { [k: string]: any },
     message: Message,
-    ...props: string[]
+    ...givenArgs: string[]
 ): Promise<string | undefined> {
-    const properties: CommandArgumentMetadata<any>[] | undefined = Reflect.getMetadata(metadataKey, origin);
+    const expectedArgs: CommandArgumentMetadata<any>[] | undefined = Reflect.getMetadata(metadataKey, origin);
 
-    if (!properties) return;
+    if (!expectedArgs) return;
 
-    if (props.length < properties.length) {
-        const argHelp = properties.map((v) => ` - ${v.name}: ${v.settings.type?.id}`).join("\n ");
-        return `Incorrect usage. Correct usage:\n(command)\n${argHelp}`;
-    }
+    // if (givenArgs.length < expectedArgs.length) {const argHelp =
+    //     expectedArgs.map((v) => ` - ${v.name}:
+    //     ${v.settings.type?.id}`).join("\n "); return `Incorrect usage.
+    //     Correct usage:\n(command)\n${argHelp}`;
+    // }
 
-    for (let index = 0; index < properties?.length ?? 0; index++) {
-        const key = properties[index];
-        const newProp = props[index];
+    for (let index = 0; index < expectedArgs?.length ?? 0; index++) {
+        const key = expectedArgs[index];
+        const newProp = givenArgs[index];
 
-        if (!((await key.settings.type?.validate(newProp, message)) ?? true)) {
-            return `Cannot use '${newProp}' as a ${key.settings.type?.id} type.`;
+        if (!newProp && key.settings.default) {
+            origin[key.name] = key.settings.default(message);
+            continue;
         }
 
-        if (key.settings.validate && !key.settings.validate(newProp)) {
-            return `Cannot use '${newProp}' as it fails the validation ${key.settings.validate}.`;
+        if (!((await key.settings.type?.validate(newProp, message)) ?? true)) {
+            return generateHelp(`Cannot use '${newProp}' as a ${key.settings.type?.id} type`, expectedArgs);
+        }
+
+        try {
+            if (key.settings.validate && !key.settings.validate(newProp)) {
+                return generateHelp(
+                    `Cannot use '${newProp}' as it fails the validation ${key.settings.validate}`,
+                    expectedArgs
+                );
+            }
+        } catch {
+            return generateHelp(
+                `Cannot use '${newProp}' as it fails the validation ${key.settings.validate}`,
+                expectedArgs
+            );
         }
 
         const parsed = await key.settings.type?.parse(newProp, message);
@@ -76,6 +92,11 @@ export async function setArguments(
     }
     return;
 }
+
+const generateHelp = (specificProblem: string, expectedArgs: CommandArgumentMetadata<any>[]) => {
+    const argHelp = expectedArgs.map((v) => ` - ${v.name}: ${v.settings.type?.id}`).join("\n");
+    return `Incorrect usage. Correct usage:\n(command)\n${argHelp}\n\nYour error: ${specificProblem}`;
+};
 
 interface CommandArgumentMetadata<T> {
     name: string;
@@ -85,4 +106,5 @@ interface CommandArgumentMetadata<T> {
 interface ArgumentArgs<T> {
     type?: ArgumentType<T>;
     validate?: (s: T) => boolean;
+    default?: (m: Message) => T;
 }
