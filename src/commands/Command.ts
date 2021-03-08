@@ -21,28 +21,29 @@ export default abstract class AbstractCommand {
         if (!shouldExecute) return;
 
         const shouldBlock = this.internalCommandShouldBlock(message, permissionManager);
-        if (shouldBlock)
-            return this.error(
+        if (shouldBlock) {
+            return this.commandDidBlock(
                 message,
                 `This command requires you to have ${permissionManager?.permissions} permissions in the server.`
             );
+        }
 
         const shouldInhibit = this.internalCommandShouldInhibit(message, inhibitor);
-        if (shouldInhibit) return this.error(message, "Command inhibited");
+        if (shouldInhibit) return this.commandDidInhibit(message, shouldInhibit);
 
         const argumentErrors = await setArguments(this, message, ...fragments.slice(1));
-        if (argumentErrors) return this.error(message, argumentErrors);
+        if (argumentErrors) return this.commandDidShowHelp(message, ...argumentErrors);
 
         this.execute(message, client)
             .then(() => this.internalCommandDidExecute())
             .catch((e) => this.error(message, e?.toString()));
     };
 
-    private readonly internalCommandShouldInhibit = (message: Message, inhibitor?: CommandInhibitor) => {
+    private readonly internalCommandShouldInhibit = (message: Message, inhibitor?: CommandInhibitor): string | void => {
         if (inhibitor) {
             return inhibitor.commandShouldInhibit(message);
         }
-        return false;
+        return;
     };
 
     private readonly internalCommandShouldExecute = (
@@ -98,7 +99,28 @@ export default abstract class AbstractCommand {
         );
         Log.warn(issue);
     }
+
+    protected commandDidInhibit(sourceMessage: Message, issue: string): any {
+        sourceMessage.channel.send(
+            `This command has a cooldown. The specific problem is as follows: \`\`\`${issue}\`\`\``
+        );
+        Log.warn(issue);
+    }
+
+    protected commandDidShowHelp(sourceMessage: Message, help: string, issue: string): any {
+        sourceMessage.channel.send(
+            `You seem to have used the command incorrectly: ${codify(issue)}Correct Usage: ${codify(help)}`
+        );
+        Log.warn(issue);
+    }
+
+    protected commandDidBlock(sourceMessage: Message, issue: string): any {
+        sourceMessage.channel.send(issue);
+        Log.warn(issue);
+    }
 }
+
+const codify = (str: string) => `\`\`\`${str}\`\`\``;
 
 interface CommandHandlerArgs {
     fragments: string[];

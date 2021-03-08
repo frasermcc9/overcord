@@ -49,7 +49,7 @@ export async function setArguments(
     origin: { [k: string]: any },
     message: Message,
     ...givenArgs: string[]
-): Promise<string | undefined> {
+): Promise<[string, string] | undefined> {
     const expectedArgs: CommandArgumentMetadata<any>[] | undefined = Reflect.getMetadata(metadataKey, origin);
 
     if (!expectedArgs) return;
@@ -93,9 +93,9 @@ export async function setArguments(
     return;
 }
 
-const generateHelp = (specificProblem: string, expectedArgs: CommandArgumentMetadata<any>[]) => {
+const generateHelp = (specificProblem: string, expectedArgs: CommandArgumentMetadata<any>[]): [string, string] => {
     const argHelp = expectedArgs.map((v) => ` - ${v.name}: ${v.settings.type?.id}`).join("\n");
-    return `Incorrect usage. Correct usage:\n(command)\n${argHelp}\n\nYour error: ${specificProblem}`;
+    return [`(command)\n${argHelp}`, `Your error: ${specificProblem}`];
 };
 
 interface CommandArgumentMetadata<T> {

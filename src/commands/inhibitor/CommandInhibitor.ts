@@ -39,19 +39,22 @@ export default class CommandInhibitor {
         }
     }
 
-    commandShouldInhibit(commandMessage: Message): boolean {
-        if (!this.useInhibitor) return false;
+    commandShouldInhibit(commandMessage: Message): string | void {
+        if (!this.useInhibitor) return;
 
         const id = this.getIdContext(commandMessage);
         const usages = this.inhibitionMap?.get(id);
 
-        if (usages === this.maxUsesPerPeriod) return true;
+        if (usages === this.maxUsesPerPeriod)
+            return `This command can only be used ${this.maxUsesPerPeriod} time per ${
+                this.periodDuration
+            } seconds, per ${this.limitBy.toLowerCase()}.`;
         this.inhibitionMap?.set(id, (usages ?? 0) + 1);
 
         setTimeout(() => {
             this.inhibitionMap?.set(id, (usages ?? 1) - 1);
         }, this.periodDuration * 1000);
 
-        return false;
+        return;
     }
 }
