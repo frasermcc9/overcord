@@ -30,6 +30,7 @@ import path from "path";
 (async () => {
     const client = new Client({ defaultCommandPrefix: "%", owners: [], disableMentions: "everyone" });
     await client.registry.recursivelyRegisterCommands(path.join(__dirname, "/commands"));
+    await client.registry.recursivelyRegisterEvents(path.join(__dirname, "/events"));
     client.login("YOUR_TOKEN");
 })();
 ```
@@ -37,6 +38,7 @@ import path from "path";
 Use `recursivelyRegisterCommands` to register all commands in a directory. Add
 some commands, and this is all you need to bootstrap a bot.
 
+Use `recursivelyRegisterEvents` to register all events in a directory.
 
 ## Creating a command
 
