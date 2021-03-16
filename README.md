@@ -24,7 +24,7 @@ decorators to help with writing less verbose code.
 
 ## Initial Setup
 ```ts
-import { Client } from "@frasermcc/discord-commander";
+import { Client } from "@frasermcc/overcord";
 import path from "path";
 
 (async () => {

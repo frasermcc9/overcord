@@ -1,6 +1,6 @@
 {
     "name": "@frasermcc/overcord",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Command framework for discord.js, built for typescript.",
     "main": "build/index.js",
     "scripts": {
