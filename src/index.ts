@@ -2,7 +2,7 @@ import { BitField } from "discord.js";
 import path from "path";
 import Client from "./client/Client";
 import Command from "./commands/Command";
-import Permit from "./commands/permissions/Permit";
+import Permit, { OwnerOnly } from "./commands/permissions/Permit";
 import Inhibit from "./commands/inhibitor/Inhibit";
 import Alias from "./commands/alias/Alias";
 import Argument from "./commands/arguments/Argument";
@@ -21,7 +21,7 @@ export {
     UserType,
     BaseType,
 } from "./types/index";
-export { Client, Command, Permit, Inhibit, Alias, Argument, DiscordEvent };
+export { Client, Command, Permit, Inhibit, Alias, Argument, DiscordEvent, OwnerOnly };
 
 // (async () => {
 //     const client = new Client({ defaultCommandPrefix: "%", owners: [] });

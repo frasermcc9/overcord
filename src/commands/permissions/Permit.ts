@@ -1,10 +1,12 @@
 import { BitFieldResolvable, Message, PermissionString, Permissions as DiscordPermissions } from "discord.js";
+import Client from "../../client/Client";
 
 const metadataKey = Symbol("CommandPermission");
+const ownerKey = Symbol("OwnerOnly");
 type Permissions = BitFieldResolvable<PermissionString>;
 
 export default function Permit(...perms: Permissions[]): (constructor: Function) => void {
-    return function registerArgument(constructor: Function): void {
+    return function registerPermission(constructor: Function): void {
         let properties: Permissions[] = Reflect.getMetadata(metadataKey, constructor);
 
         if (properties) {
@@ -16,21 +18,43 @@ export default function Permit(...perms: Permissions[]): (constructor: Function)
     };
 }
 
+export function OwnerOnly(): (constructor: Function) => void {
+    return function registerOwnerOnly(constructor: Function): void {
+        let properties: boolean[] = Reflect.getMetadata(ownerKey, constructor);
+
+        if (properties) {
+            properties.push(true);
+        } else {
+            properties = [true];
+            Reflect.defineMetadata(ownerKey, properties, constructor);
+        }
+    };
+}
+
 export function getPermissions(origin: Function) {
     const properties: Permissions[][] = Reflect.getMetadata(metadataKey, origin);
     return properties;
 }
 
+export function getOwnerOnly(origin: Function) {
+    const properties: boolean[] = Reflect.getMetadata(ownerKey, origin);
+    return properties;
+}
+
 export class PermissionManager {
     private permissionBitfield;
+    private ownerOnly = false;
 
-    constructor(permissions?: Permissions[]) {
-        if (!permissions) {
+    constructor(permissions?: Permissions[], ownerOnly?: boolean) {
+        if (ownerOnly) {
+            this.ownerOnly = true;
             return;
         }
-
-        this.permissionBitfield = new DiscordPermissions();
-        this.permissionBitfield.add(permissions);
+        if (permissions) {
+            this.permissionBitfield = new DiscordPermissions();
+            this.permissionBitfield.add(permissions);
+            return;
+        }
     }
 
     get permissions() {
@@ -42,7 +66,13 @@ export class PermissionManager {
         return this.permissionBitfield != undefined;
     }
 
-    userHasPermissions(message: Message): boolean {
+    userHasPermissions(message: Message, client: Client): boolean {
+        if (client.isOwner(message.author.id)) {
+            return true;
+        }
+        if (this.ownerOnly) {
+            return false;
+        }
         if (this.permissionBitfield == undefined) {
             return true;
         }
