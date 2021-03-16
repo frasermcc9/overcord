@@ -20,7 +20,7 @@ export default abstract class AbstractCommand {
         const shouldExecute = this.internalCommandShouldExecute(message, fragments, aliasManager);
         if (!shouldExecute) return;
 
-        const shouldBlock = this.internalCommandShouldBlock(message, permissionManager);
+        const shouldBlock = this.internalCommandShouldBlock(message, client, permissionManager);
         if (shouldBlock) {
             return this.commandDidBlock(
                 message,
@@ -66,9 +66,10 @@ export default abstract class AbstractCommand {
 
     private readonly internalCommandShouldBlock = (
         commandMessage: Message,
+        client: Client,
         permissionManager?: PermissionManager
     ): boolean => {
-        if (permissionManager?.userHasPermissions(commandMessage) ?? true) {
+        if (permissionManager?.userHasPermissions(commandMessage, client) ?? true) {
             return this.commandShouldBlock(commandMessage, permissionManager);
         }
         return true;
