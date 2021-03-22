@@ -58,7 +58,7 @@ module.exports = {
         {
           title: "Commands",
           collapsable: false,
-          children: ["commands/commands"]
+          children: ["commands/commands", "commands/arguments"]
         }
       ]
     }
