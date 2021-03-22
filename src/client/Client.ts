@@ -14,15 +14,20 @@ export default class Client extends BaseClient {
     private readonly _dispatcher;
 
     private readonly _guildSettings;
+    private readonly _owners: Set<string>;
 
     constructor(options: Options) {
         super(options);
-
+        this._owners = new Set(options.owners);
         this._registry = new CommandRegistry(this);
         this._dispatcher = new Dispatcher(this, this.registry);
         this._guildSettings = new GuildSettingsManager(options.defaultCommandPrefix ?? "!");
 
         this.on("message", (m) => this.dispatcher.handleRawMessage(m));
+    }
+
+    isOwner(id: string) {
+        return this._owners.has(id);
     }
 
     get guildSettingsManager() {

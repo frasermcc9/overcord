@@ -3,10 +3,10 @@ import { Message } from "discord.js";
 import { resolve, sep } from "path";
 import CommandInhibitor from "./inhibitor/CommandInhibitor";
 import { getInhibitor } from "./inhibitor/Inhibit";
-import { AliasManager, getAliases } from "./alias/Alias";
+import { Aliases, AliasManager, getAliases } from "./alias/Alias";
 import AbstractCommand from "./Command";
 import Command from "./Command";
-import { getPermissions, PermissionManager } from "./permissions/Permit";
+import { getOwnerOnly, getPermissions, PermissionManager } from "./permissions/Permit";
 import DiscordEvent from "../events/BaseEvent";
 import Client from "../client/Client";
 const { readdir } = require("fs").promises;
@@ -92,21 +92,7 @@ export class CommandRegistry {
                     continue;
                 }
 
-                const inhibitorMetadata = getInhibitor(required);
-                const aliasesMetadata = getAliases(required);
-                const permissionMetadata = getPermissions(required);
-
-                const inhibitor = inhibitorMetadata?.length > 0 ? inhibitorMetadata[0] : undefined;
-                const aliases = aliasesMetadata?.length > 0 ? aliasesMetadata[0] : undefined;
-                const permissions = permissionMetadata?.length > 0 ? permissionMetadata[0] : undefined;
-
-                const command: StatefulCommand = {
-                    cmdConstructor: required,
-                    inhibitor: inhibitor ? new CommandInhibitor(inhibitor) : undefined,
-                    aliases: aliases ? new AliasManager(aliases) : undefined,
-                    permissionManager: permissions ? new PermissionManager(permissions) : undefined,
-                    group: root,
-                };
+                const [command, aliases] = this.parseMetadata(required, root);
 
                 aliases?.forEach((alias) => {
                     alias = alias.toLowerCase();
@@ -121,6 +107,29 @@ export class CommandRegistry {
             }
         }
         return commandMap;
+    }
+
+    private parseMetadata(required: CommandConstructor, root: string): [StatefulCommand, Aliases | undefined] {
+        const inhibitorMetadata = getInhibitor(required);
+        const aliasesMetadata = getAliases(required);
+        const permissionMetadata = getPermissions(required);
+        const ownerMetadata = getOwnerOnly(required);
+
+        const inhibitor = inhibitorMetadata?.length > 0 ? inhibitorMetadata[0] : undefined;
+        const aliases = aliasesMetadata?.length > 0 ? aliasesMetadata[0] : undefined;
+        const permissions = permissionMetadata?.length > 0 ? permissionMetadata[0] : undefined;
+        const ownerOnly = ownerMetadata?.length > 0 ? ownerMetadata[0] : undefined;
+
+        return [
+            {
+                cmdConstructor: required,
+                inhibitor: inhibitor ? new CommandInhibitor(inhibitor) : undefined,
+                aliases: aliases ? new AliasManager(aliases) : undefined,
+                permissionManager: permissions ? new PermissionManager(permissions, ownerOnly) : undefined,
+                group: root,
+            },
+            aliases,
+        ];
     }
 
     private async getEvents(directory: string): Promise<Map<string, DiscordEvent<any>[]>> {

@@ -18,7 +18,7 @@ export function getAliases(origin: Function) {
     return properties;
 }
 
-type Aliases = string[];
+export type Aliases = string[];
 
 export class AliasManager {
     constructor(private readonly _aliases?: Aliases) {}

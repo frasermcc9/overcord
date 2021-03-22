@@ -1,0 +1,19 @@
+{
+  "name": "overcord",
+  "version": "0.0.1",
+  "description": "A command framework for Discord.js that uses decorators.",
+  "main": "index.js",
+  "authors": {
+    "name": "Fraser",
+    "email": "fraser@themccallums.net.nz"
+  },
+  "repository": "https://github.com/frasermcc9/overcord/overcord",
+  "scripts": {
+    "dev": "vuepress dev src",
+    "build": "vuepress build src"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^1.5.3"
+  }
+}

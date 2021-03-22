@@ -1,13 +1,14 @@
 {
     "name": "@frasermcc/overcord",
-    "version": "0.1.2",
+    "version": "0.2.2",
     "description": "Command framework for discord.js, built for typescript.",
     "main": "build/index.js",
     "scripts": {
         "start": "run-p watch daemon",
         "watch": "tsc --watch",
         "daemon": "nodemon",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "docs:build": "cd docs && npm run build"
     },
     "keywords": [
         "discord",
