@@ -18,7 +18,12 @@ export default class Dispatcher {
             return;
         }
         const cleanContent = content.replace(prefix, "");
-        const fragments = cleanContent.split(/\s+/);
+        const cleanedSpace = cleanContent.replace(/\s+/g, " ");
+        const fragments = Array.from(cleanedSpace.matchAll(/"[^"]+"|[^\s]+/g)).map((s) =>
+            s.toString().replace(/"/g, "")
+        );
+        console.log(fragments);
+        return;
         this.registry.executeCommand({ fragments, message });
     }
 }

@@ -69,6 +69,11 @@ export async function setArguments(
             continue;
         }
 
+        if(!newProp && key.settings.optional) {
+            origin[key.name] = undefined;
+            continue;
+        }
+
         if (!((await key.settings.type?.validate(newProp, message)) ?? true)) {
             return generateHelp(`Cannot use '${newProp}' as a ${key.settings.type?.id} type`, expectedArgs);
         }
@@ -107,4 +112,5 @@ interface ArgumentArgs<T> {
     type?: ArgumentType<T>;
     validate?: (s: T) => boolean;
     default?: (m: Message) => T;
+    optional?: boolean;
 }

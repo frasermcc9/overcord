@@ -31,7 +31,7 @@ export { Client, Command, Permit, Inhibit, Alias, Argument, DiscordEvent };
 
 //     //@ts-ignore
 //     client.emit("message", {
-//         content: "%test yes 45 12",
+//         content: `%test yes 45 12 "test arg" --flag`,
 //         author: { id: "12345" },
 //         member: { permissions: new BitField(8) },
 //         guild: { id: "guild123" },
