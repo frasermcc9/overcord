@@ -22,8 +22,6 @@ export default class Dispatcher {
         const fragments = Array.from(cleanedSpace.matchAll(/"[^"]+"|[^\s]+/g)).map((s) =>
             s.toString().replace(/"/g, "")
         );
-        console.log(fragments);
-        return;
         this.registry.executeCommand({ fragments, message });
     }
 }

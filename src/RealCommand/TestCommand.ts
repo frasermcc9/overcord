@@ -5,6 +5,7 @@ import Command from "../commands/Command";
 import Inhibit from "../commands/inhibitor/Inhibit";
 import Permit from "../commands/permissions/Permit";
 import { BooleanType, IntegerType, UnionType, FloatType } from "../types";
+import InfiniteType from "../types/infinite";
 
 @Inhibit({ limitBy: "USER", maxUsesPerPeriod: 3, periodDuration: 10 })
 @Alias("hello", "test")
@@ -19,7 +20,11 @@ export default class TestCommand extends Command {
     @Argument({ type: new UnionType(new IntegerType(), new FloatType()) })
     someNumber!: number;
 
+    @Argument({ type: new IntegerType(), infinite: true, validate: (n) => n > 0 })
+    infiniteArgs!: number[];
+
     async execute(message: Message) {
         console.log(`Executed! Args: ${this.someBoolean} ${this.someInteger} ${this.someNumber} `);
+        console.log(`Executed! Infinite Args: ${this.infiniteArgs}`);
     }
 }

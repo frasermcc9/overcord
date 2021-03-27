@@ -3,6 +3,8 @@ import ArgumentType from "../../types/base";
 import Log from "@frasermcc/log";
 import { Message } from "discord.js";
 import { join } from "path";
+import InfiniteType from "../../types/infinite";
+import { StringType } from "../../types";
 
 const metadataKey = Symbol("CommandArgument");
 
@@ -69,9 +71,46 @@ export async function setArguments(
             continue;
         }
 
-        if(!newProp && key.settings.optional) {
+        if (!newProp && key.settings.optional) {
             origin[key.name] = undefined;
             continue;
+        }
+
+        if (key.settings.infinite) {
+            let j = index;
+            let values: string[] = [];
+            let newPropTemp = newProp;
+            while (newPropTemp) {
+                values.push(newPropTemp);
+                j++;
+                newPropTemp = givenArgs[j];
+            }
+
+            for (const givenArg of values) {
+                try {
+                    if (!((await key.settings.type?.validate(givenArg, message)) ?? true)) {
+                        return generateHelp(
+                            `Cannot use '${givenArg}' as a ${key.settings.type?.id} type`,
+                            expectedArgs
+                        );
+                    }
+                    if (key.settings.validate && !key.settings.validate(givenArg)) {
+                        return generateHelp(
+                            `Cannot use '${givenArg}' as it fails the validation ${key.settings.validate}`,
+                            expectedArgs
+                        );
+                    }
+                } catch {
+                    return generateHelp(
+                        `Cannot use '${givenArg}' as it fails the validation ${key.settings.validate}`,
+                        expectedArgs
+                    );
+                }
+            }
+            const parser = new InfiniteType(key.settings.type ?? new StringType());
+            const parsed = await parser.arrayParser(values, message);
+            origin[key.name] = parsed;
+            break;
         }
 
         if (!((await key.settings.type?.validate(newProp, message)) ?? true)) {
@@ -113,4 +152,5 @@ interface ArgumentArgs<T> {
     validate?: (s: T) => boolean;
     default?: (m: Message) => T;
     optional?: boolean;
+    infinite?: boolean;
 }
