@@ -1,12 +1,14 @@
 import Log from "@frasermcc/log";
-import { Message } from "discord.js";
+import { Message, MessageCollector, NewsChannel } from "discord.js";
+import Client from "../client/Client";
+import { AliasManager } from "./alias/Alias";
 import { clearArguments, setArguments } from "./arguments/Argument";
 import CommandInhibitor from "./inhibitor/CommandInhibitor";
-import { AliasManager } from "./alias/Alias";
 import { PermissionManager } from "./permissions/Permit";
-import Client from "../client/Client";
 
 export default abstract class AbstractCommand {
+    private _message?: Message;
+
     constructor() {}
 
     public readonly handle = async ({
@@ -33,6 +35,8 @@ export default abstract class AbstractCommand {
 
         const argumentErrors = await setArguments(this, message, ...fragments.slice(1));
         if (argumentErrors) return this.commandDidShowHelp(message, ...argumentErrors);
+
+        this._message = message;
 
         this.execute(message, client)
             .then(() => this.internalCommandDidExecute())
@@ -119,6 +123,40 @@ export default abstract class AbstractCommand {
         sourceMessage.channel.send(issue);
         Log.warn(issue);
     }
+
+    protected readonly awaitReply = async ({
+        promptText,
+        secondsTimeout,
+        sourceMessage,
+    }: {
+        sourceMessage: Message;
+        promptText: string;
+        secondsTimeout: number;
+    }) => {
+        await sourceMessage.channel.send(promptText);
+        const message = await sourceMessage.channel.awaitMessages((m) => m.author.id === sourceMessage.author.id, {
+            errors: ["time"],
+            max: 1,
+        });
+        return message.first();
+        // return new Promise<string>((res, rej) => {
+        //     if (sourceMessage.channel.type === "news" || sourceMessage.channel instanceof NewsChannel) return rej();
+        //     new MessageCollector(sourceMessage.channel, (m) => m.author.id === sourceMessage.author.id, {
+        //         max: 1,
+        //         time: 1000 * secondsTimeout,
+        //     })
+        //         .once("collect", (m: Message) => res(m.content))
+        //         .once("end", (collected, reason) => {
+        //             if (collected.size === 0) rej(reason);
+        //         });
+        // });
+    };
+
+    protected readonly say = async (content: string) => {
+        if (this._message) {
+            return this._message.channel.send(content);
+        }
+    };
 }
 
 const codify = (str: string) => `\`\`\`${str}\`\`\``;
