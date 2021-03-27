@@ -19,6 +19,8 @@ decorators to help with writing less verbose code.
 - [x] Union types
 - [x] Command Permissions
 - [x] Command Groups
+- [x] Infinite Arguments
+- [ ] Useful Patterns Built in
 
 # Current Usage
 
