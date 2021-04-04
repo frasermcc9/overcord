@@ -113,11 +113,12 @@ export default abstract class AbstractCommand {
      */
     abstract execute(message: Message, client: Client): Promise<any>;
 
-    protected error(sourceMessage: Message, issue: string): any {
-        sourceMessage.channel.send(
+    protected error(sourceMessage: Message, issue: string): Promise<Message> {
+        const reply = sourceMessage.channel.send(
             `There was an error when running this command. The specific problem is as follows: \`\`\`${issue}\`\`\``
         );
         Log.warn(issue);
+        return reply;
     }
 
     protected commandDidInhibit(sourceMessage: Message, issue: string): any {
