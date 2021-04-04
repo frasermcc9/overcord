@@ -1,5 +1,5 @@
 import Log from "@frasermcc/log";
-import { Message, MessageCollector, NewsChannel } from "discord.js";
+import { Message, MessageCollector, MessageEmbed, NewsChannel } from "discord.js";
 import Client from "../client/Client";
 import { AliasManager } from "./alias/Alias";
 import { clearArguments, setArguments } from "./arguments/Argument";
@@ -22,19 +22,27 @@ export default abstract class AbstractCommand {
         const shouldExecute = this.internalCommandShouldExecute(message, fragments, aliasManager);
         if (!shouldExecute) return;
 
+        const allowedServers = permissionManager?.getAllowedServers();
+        if (allowedServers && allowedServers.length !== 0 && !allowedServers?.includes(message.guild?.id ?? "")) return;
+
+        const argumentErrors = await setArguments(this, message, ...fragments.slice(1));
+        if (argumentErrors) return this.commandDidShowHelp(message, ...argumentErrors);
+
+        const customBlockMessage = await this.customCommandBlocker(message, client);
+        if (customBlockMessage.shouldBlock) {
+            if (customBlockMessage.msg) await this.commandDidBlock(message, customBlockMessage.msg);
+            return;
+        }
+
         const shouldBlock = this.internalCommandShouldBlock(message, client, permissionManager);
         if (shouldBlock) {
-            return this.commandDidBlock(
-                message,
-                `This command requires you to have ${permissionManager?.permissions} permissions in the server.`
-            );
+            let errorMsg = `This command requires you to have ${permissionManager?.permissions} permissions in the server.`;
+            if (!permissionManager?.permissions) errorMsg = `This command can only be used by the bot owner.`;
+            return this.commandDidBlock(message, errorMsg);
         }
 
         const shouldInhibit = this.internalCommandShouldInhibit(message, inhibitor);
         if (shouldInhibit) return this.commandDidInhibit(message, shouldInhibit);
-
-        const argumentErrors = await setArguments(this, message, ...fragments.slice(1));
-        if (argumentErrors) return this.commandDidShowHelp(message, ...argumentErrors);
 
         this._message = message;
 
@@ -42,6 +50,13 @@ export default abstract class AbstractCommand {
             .then(() => this.internalCommandDidExecute())
             .catch((e) => this.error(message, e?.toString()));
     };
+
+    protected async customCommandBlocker(
+        message: Message,
+        client: Client
+    ): Promise<{ shouldBlock: boolean; msg?: string }> {
+        return { shouldBlock: false };
+    }
 
     private readonly internalCommandShouldInhibit = (message: Message, inhibitor?: CommandInhibitor): string | void => {
         if (inhibitor) {
@@ -119,8 +134,8 @@ export default abstract class AbstractCommand {
         Log.warn(issue);
     }
 
-    protected commandDidBlock(sourceMessage: Message, issue: string): any {
-        sourceMessage.channel.send(issue);
+    protected async commandDidBlock(sourceMessage: Message, issue: string): Promise<any> {
+        await sourceMessage.channel.send(issue);
         Log.warn(issue);
     }
 
@@ -130,10 +145,12 @@ export default abstract class AbstractCommand {
         sourceMessage,
     }: {
         sourceMessage: Message;
-        promptText: string;
+        promptText?: string;
         secondsTimeout: number;
     }) => {
-        await sourceMessage.channel.send(promptText);
+        if (promptText) {
+            await sourceMessage.channel.send(promptText);
+        }
         const message = await sourceMessage.channel.awaitMessages((m) => m.author.id === sourceMessage.author.id, {
             errors: ["time"],
             max: 1,
@@ -152,10 +169,40 @@ export default abstract class AbstractCommand {
         // });
     };
 
-    protected readonly say = async (content: string) => {
+    protected readonly say = async (content: string | MessageEmbed) => {
         if (this._message) {
-            return this._message.channel.send(content);
+            if (typeof content === "string") return this._message.channel.send(content);
+            return this._message.channel.send({ embed: content });
         }
+    };
+
+    protected readonly codifySay = async (content: string) => {
+        if (this._message) {
+            if (typeof content === "string") return this._message.channel.send("```" + content + "```");
+        }
+    };
+
+    protected readonly printArrayChunks = async (content: string[]) => {
+        const joined = content.join("\n");
+        const totalChars = joined.length;
+        if (totalChars < 1990) return this.codifySay(joined);
+
+        let currentMessage = "";
+        for (let i = 0; i < content.length; i++) {
+            const element = content[i];
+            const elementSize = element.length;
+            const currentSize = currentMessage.length;
+            if (currentSize + elementSize < 1990) {
+                currentMessage += element + "\n";
+            } else {
+                await this.codifySay(currentMessage);
+                currentMessage = element + "\n";
+            }
+        }
+        if (currentMessage) {
+            await this.codifySay(currentMessage);
+        }
+        return;
     };
 }
 

@@ -6,7 +6,7 @@ import { getInhibitor } from "./inhibitor/Inhibit";
 import { Aliases, AliasManager, getAliases } from "./alias/Alias";
 import AbstractCommand from "./Command";
 import Command from "./Command";
-import { getOwnerOnly, getPermissions, PermissionManager } from "./permissions/Permit";
+import { getAllowedServers, getOwnerOnly, getPermissions, PermissionManager } from "./permissions/Permit";
 import DiscordEvent from "../events/BaseEvent";
 import Client from "../client/Client";
 const { readdir } = require("fs").promises;
@@ -114,18 +114,20 @@ export class CommandRegistry {
         const aliasesMetadata = getAliases(required);
         const permissionMetadata = getPermissions(required);
         const ownerMetadata = getOwnerOnly(required);
+        const allowedServerMetadata = getAllowedServers(required);
 
         const inhibitor = inhibitorMetadata?.length > 0 ? inhibitorMetadata[0] : undefined;
         const aliases = aliasesMetadata?.length > 0 ? aliasesMetadata[0] : undefined;
         const permissions = permissionMetadata?.length > 0 ? permissionMetadata[0] : undefined;
         const ownerOnly = ownerMetadata?.length > 0 ? ownerMetadata[0] : undefined;
+        const allowedServers = allowedServerMetadata?.length > 0 ? allowedServerMetadata : undefined;
 
         return [
             {
                 cmdConstructor: required,
                 inhibitor: inhibitor ? new CommandInhibitor(inhibitor) : undefined,
                 aliases: aliases ? new AliasManager(aliases) : undefined,
-                permissionManager: permissions ? new PermissionManager(permissions, ownerOnly) : undefined,
+                permissionManager: new PermissionManager(permissions, ownerOnly, allowedServers),
                 group: root,
             },
             aliases,
