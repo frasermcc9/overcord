@@ -100,7 +100,7 @@ function generatePackage(dirName: string) {
         "author": "",
         "license": "ISC",
         "dependencies": {
-            "@frasermcc/overcord": "*",
+            "@frasermcc/overcord": "0.4.1",
             "@frasermcc/log": "^1.0.0",
             "discord.js": "^12.5.1",
             "dotenv": "^8.2.0"
