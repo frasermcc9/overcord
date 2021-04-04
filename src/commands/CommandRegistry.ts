@@ -9,6 +9,7 @@ import Command from "./Command";
 import { getAllowedServers, getOwnerOnly, getPermissions, PermissionManager } from "./permissions/Permit";
 import DiscordEvent from "../events/BaseEvent";
 import Client from "../client/Client";
+import { existsSync } from "fs";
 const { readdir } = require("fs").promises;
 
 export class CommandRegistry {
@@ -136,6 +137,7 @@ export class CommandRegistry {
 
     private async getEvents(directory: string): Promise<Map<string, DiscordEvent<any>[]>> {
         const eventMap = new Map<string, DiscordEvent<any>[]>();
+        if (!existsSync(directory)) return eventMap;
         for await (const file of this.getFiles(directory)) {
             try {
                 if (/^(?!.*(d)\.ts$).*\.(ts|js)$/.test(file[0])) {

@@ -24,21 +24,21 @@ export {
 export { Client, Command, Permit, Inhibit, Alias, Argument, DiscordEvent, OwnerOnly, AllowServers };
 
 (async () => {
-    const client = new Client({ defaultCommandPrefix: "%", owners: [] });
-    await client.registry.recursivelyRegisterCommands(path.join(__dirname, "./RealCommand"));
-    await client.registry.recursivelyRegisterEvents(path.join(__dirname, "./RealCommand"));
-    //client.guildSettingsManager.disableGroupInGuild({ guild: "guild123", groupName: "base", shouldBeDisabled: true });
-    //@ts-ignore
-    client.emit("message", {
-        content: `%test yes 45 12 1 5 6 7 8 `,
-        author: { id: "12345" },
-        member: { permissions: new BitField(8) },
-        guild: { id: "guild123" },
-    });
-    //@ts-ignore
-    client.emit("message", { content: "%hello yes 45 12", author: { id: "12345" } });
-    //@ts-ignore
-    client.emit("message", { content: "%test yes 45 12", author: { id: "12345" } });
+    // const client = new Client({ defaultCommandPrefix: "%", owners: [] });
+    // await client.registry.recursivelyRegisterCommands(path.join(__dirname, "./RealCommand"));
+    // await client.registry.recursivelyRegisterEvents(path.join(__dirname, "./RealCommand"));
+    // //client.guildSettingsManager.disableGroupInGuild({ guild: "guild123", groupName: "base", shouldBeDisabled: true });
+    // //@ts-ignore
+    // client.emit("message", {
+    //     content: `%test yes 45 12 1 5 6 7 8 `,
+    //     author: { id: "12345" },
+    //     member: { permissions: new BitField(8) },
+    //     guild: { id: "guild123" },
+    // });
+    // //@ts-ignore
+    // client.emit("message", { content: "%hello yes 45 12", author: { id: "12345" } });
+    // //@ts-ignore
+    // client.emit("message", { content: "%test yes 45 12", author: { id: "12345" } });
     //@ts-ignore
     //client.emit("message", { content: "%test yes 45 12", author: { id: "12345" } });
     //@ts-ignore
