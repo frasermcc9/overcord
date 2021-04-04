@@ -2,7 +2,7 @@
 
 import prompts from "prompts";
 import { blue, red } from "colors";
-import { mkdir, mkdirSync, writeFileSync } from "fs";
+import { fstat, mkdir, mkdirSync, writeFileSync } from "fs";
 import { exec, execSync } from "child_process";
 import touch from "touch";
 import cliProgress from "cli-progress";
@@ -44,7 +44,7 @@ function createDirectory(dir: string) {
 
     progressBar.update(10);
 
-    execSync("npm init -y");
+    generatePackage(dir);
 
     progressBar.update(20);
 
@@ -52,21 +52,23 @@ function createDirectory(dir: string) {
 
     progressBar.update(30);
 
-    execSync("tsc --init");
+    generateTsConfig();
 
     progressBar.update(40);
 
-    execSync("npm i @frasermcc/overcord dotenv");
+    generateEnv();
+    progressBar.update(50);
 
-    progressBar.update(80);
+    generateGitIgnore();
+    progressBar.update(60);
 
-    execSync("npm i -D @types/node nodemon npm-run-all rimraf");
+    execSync("npm i");
 
-    progressBar.update(130);
+    progressBar.update(160);
 
     execSync("mkdir src");
     process.chdir("./src");
-    touch.sync("index.ts");
+    generateIndex();
     mkdirSync("commands");
     mkdirSync("events");
 
@@ -77,7 +79,7 @@ function createDirectory(dir: string) {
 
 function generatePackage(dirName: string) {
     const text = `{
-        "name": "${dirName}",
+        "name": "${dirName.toLocaleLowerCase()}",
         "version": "1.0.0",
         "description": "",
         "main": "build/index.js",
@@ -93,9 +95,10 @@ function generatePackage(dirName: string) {
         "author": "",
         "license": "ISC",
         "dependencies": {
-            "@frasermcc/overcord": "file:../overcord",
+            "@frasermcc/overcord": "*",
+            "@frasermcc/log": "^1.0.0",
             "discord.js": "^12.5.1",
-            "dotenv": "^8.2.0",
+            "dotenv": "^8.2.0"
         },
         "devDependencies": {
             "@types/node": "^14.14.31",
@@ -131,4 +134,52 @@ function generateTsConfig() {
         },
         "include": ["src/**/*.ts", "typings/**/*.d.ts"]
     }`;
+    writeFileSync("./tsconfig.json", text);
+}
+
+function generateIndex() {
+    const text = `
+    import Log from "@frasermcc/log";
+    import { Client } from "@frasermcc/overcord";
+    import path from "path";
+    require("dotenv").config();
+    
+    (async () => {    
+        const client = new Client({
+            defaultCommandPrefix: "%",
+            owners: ["202917897176219648"],
+            disableMentions: "everyone",
+        });
+        await client.registry.recursivelyRegisterCommands(
+            path.join(__dirname, "./commands")
+        );
+        await client.registry.recursivelyRegisterEvents(
+            path.join(__dirname, "./events")
+        );
+        await client.login(process.env.DISCORD_TOKEN);
+        Log.info("Logged in successfully");
+    })();
+    
+    `;
+
+    writeFileSync("./index.ts", text);
+}
+
+function generateEnv() {
+    const text = `
+BOT_NAME=
+DISCORD_TOKEN=
+    `;
+
+    writeFileSync("./.env", text);
+}
+
+function generateGitIgnore() {
+    const text = `
+node_modules
+build
+.env
+        `;
+
+    writeFileSync("./.gitignore", text);
 }
