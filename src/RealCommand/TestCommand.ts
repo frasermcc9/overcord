@@ -3,13 +3,13 @@ import Argument from "../commands/arguments/Argument";
 import Alias from "../commands/alias/Alias";
 import Command from "../commands/Command";
 import Inhibit from "../commands/inhibitor/Inhibit";
-import Permit from "../commands/permissions/Permit";
+import Permit, { AllowServers } from "../commands/permissions/Permit";
 import { BooleanType, IntegerType, UnionType, FloatType } from "../types";
 import InfiniteType from "../types/infinite";
 
 @Inhibit({ limitBy: "USER", maxUsesPerPeriod: 3, periodDuration: 10 })
 @Alias("hello", "test")
-@Permit("ADMINISTRATOR")
+@AllowServers("12345", "newid")
 export default class TestCommand extends Command {
     @Argument({ type: new BooleanType() })
     someBoolean!: boolean;
