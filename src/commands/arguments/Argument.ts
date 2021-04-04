@@ -138,7 +138,9 @@ export async function setArguments(
 }
 
 const generateHelp = (specificProblem: string, expectedArgs: CommandArgumentMetadata<any>[]): [string, string] => {
-    const argHelp = expectedArgs.map((v) => ` - ${v.name}: ${v.settings.type?.id}`).join("\n");
+    const argHelp = expectedArgs
+        .map((v) => ` - ${v.name}: ${v.settings.type?.id} [${v.settings.description ?? "No description given"}]`)
+        .join("\n");
     return [`(command)\n${argHelp}`, `Your error: ${specificProblem}`];
 };
 
@@ -153,4 +155,5 @@ interface ArgumentArgs<T> {
     default?: (m: Message) => T;
     optional?: boolean;
     infinite?: boolean;
+    description?: string;
 }

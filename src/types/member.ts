@@ -7,16 +7,16 @@ export default class MemberType extends ArgumentType<GuildMember> {
     }
 
     async validate(val: string, msg: Message) {
-        const matches = val.match(/^(?:<@!?)?([0-9]+)>?$/);
-        if (matches) {
-            try {
+        try {
+            const matches = val.match(/^(?:<@!?)?([0-9]+)>?$/);
+            if (matches) {
                 const member = await msg.guild?.members.fetch(await msg.client.users.fetch(matches[1]));
                 if (!member) return false;
 
                 return true;
-            } catch (err) {
-                return false;
             }
+        } catch (err) {
+            return false;
         }
         const search = val.toLowerCase();
         let members = msg.guild?.members.cache.filter(memberFilterInexact(search));

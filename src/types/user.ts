@@ -7,16 +7,16 @@ export default class UserType extends ArgumentType<User> {
     }
 
     async validate(val: string, msg: Message) {
-        const matches = val.match(/^(?:<@!?)?([0-9]+)>?$/);
-        if (matches) {
-            try {
+        try {
+            const matches = val.match(/^(?:<@!?)?([0-9]+)>?$/);
+            if (matches) {
                 const user = await msg.client.users.fetch(matches[1]);
                 if (!user) return false;
 
                 return true;
-            } catch (err) {
-                return false;
             }
+        } catch (err) {
+            return false;
         }
         if (!msg.guild) return false;
         const search = val.toLowerCase();
