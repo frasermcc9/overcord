@@ -65,11 +65,16 @@ function createDirectory(dir: string) {
 
     progressBar.update(160);
 
-    execSync("mkdir src");
+    mkdirSync("src");
     process.chdir("./src");
     generateIndex();
     mkdirSync("commands");
     mkdirSync("events");
+
+    progressBar.update(180);
+
+    process.chdir("commands");
+    createExampleCommand();
 
     progressBar.update(200);
 
@@ -182,4 +187,20 @@ build
         `;
 
     writeFileSync("./.gitignore", text);
+}
+
+function createExampleCommand() {
+    const text = `
+import { Alias, Client, Command } from "@frasermcc/overcord";
+import { Message } from "discord.js";
+
+@Alias("test")
+export default class TestCommand extends Command {
+    execute(message: Message, client: Client): Promise<any> {
+        return message.channel.send("Hello");
+    }
+}
+`;
+
+    writeFileSync("./TestCommand", text);
 }

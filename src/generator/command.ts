@@ -6,7 +6,7 @@ const template = (commandName: string) => `
 import { Alias, Client, Command } from "@frasermcc/overcord";
 import { Message } from "discord.js";
 
-@Alias("${commandName}")
+@Alias("${commandName.toLowerCase()}")
 export default class ${commandName}Command extends Command {
     execute(message: Message, client: Client): Promise<any> {
         return message.channel.send("Hello");
