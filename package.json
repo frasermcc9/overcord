@@ -1,6 +1,6 @@
 {
     "name": "@frasermcc/overcord",
-    "version": "0.3.4",
+    "version": "0.4.0",
     "description": "Command framework for discord.js, built for typescript.",
     "main": "build/index.js",
     "scripts": {
@@ -11,7 +11,8 @@
         "docs:build": "cd docs && npm run build",
         "prebuild": "rimraf ./build",
         "build": "tsc",
-        "overcord": "node ./build/generator/generate.js"
+        "overcord": "node ./build/generator/generate.js",
+        "create-command": "node ./build/generator/command.js"
     },
     "keywords": [
         "discord",

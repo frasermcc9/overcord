@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 
-import prompts from "prompts";
-import { blue, red } from "colors";
-import { fstat, mkdir, mkdirSync, writeFileSync } from "fs";
-import { exec, execSync } from "child_process";
-import touch from "touch";
+import { execSync } from "child_process";
 import cliProgress from "cli-progress";
+import { blue, red } from "colors";
+import { mkdirSync, writeFileSync } from "fs";
+import prompts from "prompts";
 
 (async () => {
     {
@@ -17,7 +16,7 @@ import cliProgress from "cli-progress";
 
         if (!confirm) {
             console.log(red("Cancelled script."));
-            process.exit(1);
+            process.exit(0);
         }
     }
     {
@@ -28,7 +27,7 @@ import cliProgress from "cli-progress";
         });
         if (!dir) {
             console.log(red("No name provided."));
-            process.exit(1);
+            process.exit(0);
         }
         console.log(blue("Working..."));
         createDirectory(dir);
@@ -89,7 +88,8 @@ function generatePackage(dirName: string) {
             "daemon": "nodemon --delay 1000ms",
             "build": "rimraf ./build && tsc",
             "test": "ts-mocha ./src/test/**/*.test.ts",
-            "prestart": "npm run build"
+            "prestart": "npm run build",
+            "create-command": "node ./node_modules/@frasermcc/overcord/build/generator/command.js"
         },
         "keywords": [],
         "author": "",
