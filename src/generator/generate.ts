@@ -208,5 +208,5 @@ export default class TestCommand extends Command {
 }
 `;
 
-    writeFileSync("./TestCommand", text);
+    writeFileSync("./TestCommand.ts", text);
 }
