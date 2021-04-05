@@ -111,10 +111,12 @@ function generatePackage(dirName: string) {
         },
         "devDependencies": {
             "@types/node": "^14.14.31",
+            "@types/mocha": "^8.2.1",
             "mocha": "^8.2.1",
             "nodemon": "^2.0.7",
             "npm-run-all": "^4.1.5",
             "rimraf": "^3.0.2",
+            "ts-mocha": "^8.0.0",
             "typescript": "^4.2.3"
         }
     }
