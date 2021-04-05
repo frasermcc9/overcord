@@ -2,7 +2,7 @@
 
 import { execSync } from "child_process";
 import cliProgress from "cli-progress";
-import { blue, red } from "colors";
+import { blue, green, red } from "colors";
 import { mkdirSync, writeFileSync } from "fs";
 import prompts from "prompts";
 
@@ -31,6 +31,7 @@ import prompts from "prompts";
         }
         console.log(blue("Working..."));
         createDirectory(dir);
+        console.log(green("All finished!"));
     }
 })();
 
@@ -65,13 +66,17 @@ function createDirectory(dir: string) {
 
     progressBar.update(160);
 
+    execSync("npm i @frasermcc/overcord@latest");
+
+    progressBar.update(180);
+
     mkdirSync("src");
     process.chdir("./src");
     generateIndex();
     mkdirSync("commands");
     mkdirSync("events");
 
-    progressBar.update(180);
+    progressBar.update(190);
 
     process.chdir("commands");
     createExampleCommand();
@@ -100,7 +105,6 @@ function generatePackage(dirName: string) {
         "author": "",
         "license": "ISC",
         "dependencies": {
-            "@frasermcc/overcord": "0.4.1",
             "@frasermcc/log": "^1.0.0",
             "discord.js": "^12.5.1",
             "dotenv": "^8.2.0"
