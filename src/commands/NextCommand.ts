@@ -56,7 +56,7 @@ export default abstract class NextCommand {
         Log.warn(issue);
     }
 
-    protected commandDidShowHelp(sourceMessage: Message, help: string, issue: string): any {
+    protected commandWillShowHelp(sourceMessage: Message, help: string, issue: string): any {
         sourceMessage.channel.send(
             `You seem to have used the command incorrectly: ${codify(issue)}Correct Usage: ${codify(help)}`
         );
@@ -151,8 +151,8 @@ export default abstract class NextCommand {
         const injectionResult = await injectCommandArguments(args);
         if (!injectionResult.shouldExecute) {
             if (injectionResult.errors)
-                return this.commandDidShowHelp(sourceMessage, injectionResult.errors[0], injectionResult.errors[1]);
-            return this.commandDidShowHelp(sourceMessage, "", "");
+                return this.commandWillShowHelp(sourceMessage, injectionResult.errors[0], injectionResult.errors[1]);
+            return this.commandWillShowHelp(sourceMessage, "", "");
         }
         // user hook
         const userResult = this.commandShouldExecute(args);
