@@ -7,6 +7,9 @@ import Inhibit from "./commands/inhibitor/Inhibit";
 import Alias from "./commands/alias/Alias";
 import Argument from "./commands/arguments/Argument";
 import DiscordEvent from "./events/BaseEvent";
+import NextCommand from "./commands/NextCommand";
+import ModuleConfig from "./commands/ModuleConfig";
+import { LogEntry, Logger, FullLogEntry } from "./util/LoggingMixin";
 
 export {
     BooleanType,
@@ -21,7 +24,22 @@ export {
     UserType,
     BaseType,
 } from "./types/index";
-export { Client, Command, Permit, Inhibit, Alias, Argument, DiscordEvent, OwnerOnly, AllowServers };
+export {
+    Client,
+    Command,
+    Permit,
+    Inhibit,
+    Alias,
+    Argument,
+    DiscordEvent,
+    OwnerOnly,
+    AllowServers,
+    NextCommand,
+    ModuleConfig,
+    LogEntry,
+    Logger,
+    FullLogEntry,
+};
 
 (async () => {
     // const client = new Client({ defaultCommandPrefix: "%", owners: [] });
