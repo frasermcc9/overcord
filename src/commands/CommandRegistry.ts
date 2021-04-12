@@ -1,6 +1,6 @@
 import Log from "@frasermcc/log";
 import { Message } from "discord.js";
-import { resolve, sep } from "path";
+import { normalize, resolve, sep } from "path";
 import CommandInhibitor from "./inhibitor/CommandInhibitor";
 import { getInhibitor } from "./inhibitor/Inhibit";
 import { Aliases, AliasManager, getAliases } from "./alias/Alias";
@@ -10,6 +10,7 @@ import { getAllowedServers, getOwnerOnly, getPermissions, PermissionManager } fr
 import DiscordEvent from "../events/BaseEvent";
 import Client from "../client/Client";
 import { existsSync } from "fs";
+import { ModuleConfig } from "..";
 const { readdir } = require("fs").promises;
 
 export class CommandRegistry {
@@ -20,6 +21,8 @@ export class CommandRegistry {
      */
     private _commandMap = new Map<string, StatefulCommand>();
     private _eventMap = new Map<string, DiscordEvent<any>[]>();
+    // module <=> description
+    private _groupSet = new Map<string, string | null>();
 
     constructor(private readonly client: Client) {}
 
@@ -76,10 +79,10 @@ export class CommandRegistry {
                     continue;
                 }
                 const root =
-                    file[1]
-                        .replace(directory, "")
+                    normalize(file[1])
+                        .replace(normalize(directory), "")
                         .split(sep)
-                        .filter((f) => !!f)[0] ?? "base";
+                        .filter((f) => !!f)[0] ?? "Base";
 
                 const required: CommandConstructor = require(file[0]).default;
                 if (typeof required !== "function") {
@@ -88,9 +91,17 @@ export class CommandRegistry {
                 }
 
                 const instance = new required();
+                if (instance instanceof ModuleConfig) {
+                    this._groupSet.set(root, instance.description ?? "");
+                    continue;
+                }
                 if (!(instance instanceof Command)) {
                     invalidFileFound(file[0]);
                     continue;
+                }
+
+                if (!this._groupSet.get(root)) {
+                    this._groupSet.set(root, null);
                 }
 
                 const [command, aliases] = this.parseMetadata(required, root);
@@ -168,8 +179,9 @@ export class CommandRegistry {
         return this._commandMap;
     }
 
+    //TODO FIX
     get commandGroups() {
-        return [...this._commandMap.keys()];
+        return this._groupSet;
     }
 }
 
