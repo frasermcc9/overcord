@@ -34,6 +34,8 @@ export default abstract class NextCommand {
         this.execute(args.message, args.client)
             .then(() => this.internalCommandDidExecute(args))
             .catch((e) => this.error(args.message, e?.toString()));
+
+        this.log(args.client, args.message, args.aliasManager);
     };
 
     protected abstract execute(message: Message, client: Client): Promise<any>;
@@ -170,6 +172,16 @@ export default abstract class NextCommand {
         );
         Log.warn(issue);
         return reply;
+    }
+
+    protected async log(client: Client, message: Message, aliasManager?: AliasManager) {
+        await client.logger?.log({
+            command: aliasManager?.aliases ? aliasManager.aliases[0] : "",
+            guild: message.guild ?? undefined,
+            invokingUser: message.author,
+            message: message,
+            time: new Date(),
+        });
     }
 
     protected readonly awaitReply = async ({

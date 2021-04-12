@@ -49,6 +49,8 @@ export default abstract class AbstractCommand {
         this.execute(message, client)
             .then(() => this.internalCommandDidExecute())
             .catch((e) => this.error(message, e?.toString()));
+
+        this.log(client, message, aliasManager);
     };
 
     protected async customCommandBlocker(
@@ -104,6 +106,16 @@ export default abstract class AbstractCommand {
     };
 
     protected commandDidExecute() {}
+
+    protected async log(client: Client, message: Message, aliasManager?: AliasManager) {
+        await client.logger?.log({
+            command: aliasManager?.aliases ? aliasManager.aliases[0] : "",
+            guild: message.guild ?? undefined,
+            invokingUser: message.author,
+            message: message,
+            time: new Date(),
+        });
+    }
 
     /**
      *
