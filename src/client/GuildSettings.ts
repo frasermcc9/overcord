@@ -31,7 +31,7 @@ export default class GuildSettingsManager {
 
     groupIsEnabled(guild: Guild | string, groupName: string) {
         guild = guildToId(guild);
-        return !this._disabledGroups.get(guild)?.has(groupName);
+        return !this._disabledGroups.get(guild)?.has(groupName.toLowerCase());
     }
 
     disableGroupInGuild({
@@ -44,6 +44,7 @@ export default class GuildSettingsManager {
         shouldBeDisabled: boolean;
     }) {
         guild = guildToId(guild);
+        groupName = groupName.toLowerCase();
         if (!this._disabledGroups.has(guild)) {
             this._disabledGroups.set(guild, new Set());
         }
@@ -54,16 +55,18 @@ export default class GuildSettingsManager {
         return disabledGroups?.delete(groupName);
     }
 
-    toggleCommandGroupStatus(guild: Guild | string, groupName: string) {
+    toggleCommandGroupStatus(guild: Guild | string, groupName: string): boolean {
         guild = guildToId(guild);
+        groupName = groupName.toLowerCase();
         if (!this._disabledGroups.has(guild)) {
             this._disabledGroups.set(guild, new Set());
         }
         const disabledGroups = this._disabledGroups.get(guild);
         if (disabledGroups?.delete(groupName)) {
-            return;
+            return true;
         }
-        return disabledGroups?.add(groupName);
+        disabledGroups?.add(groupName);
+        return false;
     }
 }
 
