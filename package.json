@@ -1,54 +1,54 @@
 {
-    "name": "@frasermcc/overcord",
-    "version": "0.4.7",
-    "description": "Command framework for discord.js, built for typescript.",
-    "main": "build/index.js",
-    "scripts": {
-        "start": "run-p watch daemon",
-        "watch": "tsc --watch",
-        "daemon": "nodemon --delay 2500ms",
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "docs:build": "cd docs && npm run build",
-        "prebuild": "rimraf ./build",
-        "build": "tsc",
-        "overcord": "node ./build/generator/generate.js",
-        "create-command": "node ./build/generator/command.js"
-    },
-    "keywords": [
-        "discord",
-        "commands",
-        "command",
-        "bot",
-        "typescript"
-    ],
-    "author": "Fraser McCallum",
-    "license": "Apache-2.0",
-    "dependencies": {
-        "@frasermcc/log": "^1.0.0",
-        "cli-progress": "^3.9.0",
-        "colors": "^1.4.0",
-        "discord.js": "^12.5.3",
-        "dotenv": "^8.2.0",
-        "prompts": "^2.4.1",
-        "reflect-metadata": "^0.1.13",
-        "touch": "^3.1.0"
-    },
-    "devDependencies": {
-        "@types/cli-progress": "^3.9.1",
-        "@types/colors": "^1.2.1",
-        "@types/node": "^14.14.31",
-        "@types/prompts": "^2.0.10",
-        "@types/touch": "^3.1.1",
-        "nodemon": "^2.0.7",
-        "npm-run-all": "^4.1.5",
-        "rimraf": "^3.0.2"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/frasermcc9/overcord.git"
-    },
-    "homepage": "https://github.com/frasermcc9/overcord#readme",
-    "bin": {
-        "overcord": "./build/generator/generate.js"
-    }
+  "name": "@frasermcc/overcord",
+  "version": "0.5.0",
+  "description": "Command framework for discord.js, built for typescript.",
+  "main": "build/index.js",
+  "scripts": {
+    "start": "run-p watch daemon",
+    "watch": "tsc --watch",
+    "daemon": "nodemon --delay 2500ms",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs:build": "cd docs && npm run build",
+    "prebuild": "rimraf ./build",
+    "build": "tsc",
+    "overcord": "node ./build/generator/generate.js",
+    "create-command": "node ./build/generator/command.js"
+  },
+  "keywords": [
+    "discord",
+    "commands",
+    "command",
+    "bot",
+    "typescript"
+  ],
+  "author": "Fraser McCallum",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@frasermcc/log": "^1.0.0",
+    "cli-progress": "^3.9.0",
+    "colors": "^1.4.0",
+    "discord.js": "^12.5.3",
+    "dotenv": "^8.2.0",
+    "prompts": "^2.4.1",
+    "reflect-metadata": "^0.1.13",
+    "touch": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/cli-progress": "^3.9.1",
+    "@types/colors": "^1.2.1",
+    "@types/node": "^14.14.31",
+    "@types/prompts": "^2.0.10",
+    "@types/touch": "^3.1.1",
+    "nodemon": "^2.0.7",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frasermcc9/overcord.git"
+  },
+  "homepage": "https://github.com/frasermcc9/overcord#readme",
+  "bin": {
+    "overcord": "./build/generator/generate.js"
+  }
 }
