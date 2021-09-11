@@ -63,6 +63,7 @@ export function getStatefulFields(origin: { [k: string]: any }): object {
 
 export async function setState(origin: { [k: string]: any }, data: SetStateRequired) {
   const properties: StatefulData<any>[] = Reflect.getMetadata(metadataKey, origin);
+  if (!properties) return;
 
   for (const statefulField of properties) {
     const setState = (newValue: any) => {
