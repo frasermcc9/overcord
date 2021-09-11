@@ -30,7 +30,7 @@ export class CommandRegistry {
 
   async recursivelyRegisterCommands(dir: string) {
     this._commandMap = await this.getCommands(dir);
-    this.slashCommandLoader.finalize();
+    await this.slashCommandLoader.finalize();
   }
 
   async recursivelyRegisterEvents(dir: string) {
@@ -98,10 +98,12 @@ export class CommandRegistry {
           this._groupSet.set(root, instance.description ?? "");
           continue;
         }
+
         if (instance instanceof SlashCommand) {
           this.slashCommandLoader.addCommand(instance);
           continue;
         }
+
         if (!(instance instanceof Command)) {
           invalidFileFound(file[0]);
           continue;

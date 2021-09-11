@@ -22,6 +22,11 @@ export default class Dispatcher {
     const cleanContent = content.replace(prefix, "");
     const cleanedSpace = cleanContent.replace(/\s+/g, " ");
     const fragments = Array.from(cleanedSpace.matchAll(/"[^"]+"|[^\s]+/g)).map((s) => s.toString().replace(/"/g, ""));
+
+    // is empty message
+    if (!fragments[0]) {
+      return;
+    }
     this.registry.executeCommand({ fragments, message });
   }
 }

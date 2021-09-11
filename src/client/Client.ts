@@ -25,7 +25,7 @@ export default class Client extends BaseClient {
   constructor(options: Options) {
     super(options);
     this._owners = new Set(options.owners);
-    this._slashCommandLoader = new SlashCommandLoader();
+    this._slashCommandLoader = new SlashCommandLoader(this);
     this._registry = new CommandRegistry(this, this._slashCommandLoader);
     this._dispatcher = new Dispatcher(this, this.registry);
     this._guildSettings = new GuildSettingsManager(options.defaultCommandPrefix ?? "!");
