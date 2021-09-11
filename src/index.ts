@@ -11,6 +11,8 @@ import NextCommand from "./commands/NextCommand";
 import ModuleConfig from "./commands/ModuleConfig";
 import { LogEntry, Logger, FullLogEntry } from "./util/LoggingMixin";
 import Stateful, { State } from "./commands/state/Stateful";
+import SlashCommand from "./commands/slash/SlashCommand";
+import { Named, Described, Domain } from "./commands/slash/SlashCommandDecorators";
 
 export {
   BooleanType,
@@ -43,6 +45,10 @@ export {
   FullLogEntry,
   State,
   Stateful,
+  SlashCommand,
+  Named,
+  Described,
+  Domain,
 };
 
 (async () => {

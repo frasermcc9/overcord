@@ -11,7 +11,7 @@ import DiscordEvent from "../events/BaseEvent";
 import Client from "../client/Client";
 import { existsSync } from "fs";
 import { ModuleConfig } from "..";
-import { SlashCommand } from "./slash/SlashCommand";
+import { SlashCommand } from "../";
 import { SlashCommandLoader } from "./slash/SlashCommandLoader";
 const { readdir } = require("fs").promises;
 
