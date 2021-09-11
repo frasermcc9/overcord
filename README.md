@@ -107,3 +107,82 @@ const TestEvent: DiscordEvent<"guildMemberAdd"> = {
 
 export default TestEvent;
 ```
+
+## Slash Commands
+An abstract `SlashCommand` class exists. Extending this instead of the regular
+`Command` class will create a slash command! Use `@Named` to name it,
+`@Described` to give it a description, and `@Domain` to pass in a rest list of
+server Ids for it to work in. Omitting the `@Domain` decorator will allow global
+use, however be aware that global interactions can take up to an hour to appear,
+so use a domain when testing!
+
+```ts
+import { Described, Domain, Named, SlashCommand } from "@frasermcc/overcord";
+
+@Named("first")
+@Described("This is an example slash command")
+@Domain("SomeServerId")
+export default class FirstSlashCommand extends SlashCommand<FirstSlashCommandOptions> {
+    constructor() {
+        super({
+            commandOptions: {
+                your_name: {
+                    description: "What is your name?",
+                    required: true,
+                    type: "STRING",
+                },
+            },
+            response: ({ your_name }, interaction) => {
+                interaction.reply(
+                    `Hello ${your_name}, you used a slash command!`
+                );
+            },
+        });
+    }
+}
+
+interface FirstSlashCommandOptions {
+    your_name: string;
+}
+
+```
+
+## State
+Overcord allows for a second type of injected argument in regular (non-slash)
+commands - a state. State is persisted between command usages (but is still kept
+in memory, not permanently persisted).
+
+```ts
+class PersistentCommand extends Command {
+    @Stateful<string[]>({
+        domain: "GUILD",
+        initialState: [],
+        onUpdate: (newState) => {
+            Database.updateNameList(newState)
+        },
+    })
+    private nameList!: State<string[]>;
+
+    ...
+
+    execute() {
+      const [getNameList, setNameList] = this.nameList;
+      const myNameList = getNameList();
+      setNameList([...myNameList, "John"]);
+    }
+}
+
+```
+
+The above example will create a state that is persisted between command usages.
+The `domain` property allows you to specify the granularity of the state, i.e.
+if the state should be shared between USERS, GUILDS, or GLOBALLY.
+
+You can destructure the state array to get the option to read and write to the
+state. You should not modify the state directly, but instead use the second
+argument to set the state. Modifications will persist, but will not fire the
+onUpdate callback.
+
+The onUpdate callback runs whenever the state is set via the second element of
+the state array. This callback could be useful for updating a database for a
+more permanent storage.

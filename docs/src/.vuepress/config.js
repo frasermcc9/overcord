@@ -58,7 +58,14 @@ module.exports = {
         {
           title: "Commands",
           collapsable: false,
-          children: ["commands/commands", "commands/decorators", "commands/arguments", "commands/overriding"]
+          children: [
+            "commands/commands",
+            "commands/decorators",
+            "commands/arguments",
+            "commands/overriding",
+            "commands/slashCommands",
+            "commands/state"
+          ]
         }
       ]
     }
