@@ -15,30 +15,30 @@ export default class ${commandName}Command extends Command {
 `;
 
 (async () => {
-    const { path } = await prompts({
-        type: "text",
-        name: "path",
-        message: "Where would you like to place the new command?",
-    });
+  const { path } = await prompts({
+    type: "text",
+    name: "path",
+    message: "Where would you like to place the new command?",
+  });
 
-    if (!path) {
-        console.log(red("No path provided"));
-        process.exit(0);
-    }
+  if (!path) {
+    console.log(red("No path provided"));
+    process.exit(0);
+  }
 
-    const { fileName } = await prompts({
-        type: "text",
-        name: "fileName",
-        message: "What would you like to name the command?",
-    });
+  const { fileName } = await prompts({
+    type: "text",
+    name: "fileName",
+    message: "What would you like to name the command?",
+  });
 
-    if (!fileName) {
-        console.log(red("No command name provided"));
-        process.exit(0);
-    }
+  if (!fileName) {
+    console.log(red("No command name provided"));
+    process.exit(0);
+  }
 
-    mkdirSync(path, { recursive: true });
-    process.chdir(path);
+  mkdirSync(path, { recursive: true });
+  process.chdir(path);
 
-    writeFileSync(fileName + ".ts", template(fileName));
+  writeFileSync(fileName + ".ts", template(fileName));
 })();
