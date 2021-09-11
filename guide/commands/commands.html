@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Commands | Overcord Guide</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="A command framework for Discord.js that uses decorators.">
+    <meta name="theme-color" content="#3eaf7c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <link rel="preload" href="/overcord/assets/css/0.styles.42309573.css" as="style"><link rel="preload" href="/overcord/assets/js/app.58262fba.js" as="script"><link rel="preload" href="/overcord/assets/js/2.fda058ae.js" as="script"><link rel="preload" href="/overcord/assets/js/13.631a196f.js" as="script"><link rel="prefetch" href="/overcord/assets/js/10.21be4b94.js"><link rel="prefetch" href="/overcord/assets/js/11.798f8ce8.js"><link rel="prefetch" href="/overcord/assets/js/12.d8dab755.js"><link rel="prefetch" href="/overcord/assets/js/14.7904c155.js"><link rel="prefetch" href="/overcord/assets/js/15.2cf45b39.js"><link rel="prefetch" href="/overcord/assets/js/16.b6040bfb.js"><link rel="prefetch" href="/overcord/assets/js/17.07cd580e.js"><link rel="prefetch" href="/overcord/assets/js/18.4be7f503.js"><link rel="prefetch" href="/overcord/assets/js/19.4332d750.js"><link rel="prefetch" href="/overcord/assets/js/20.33164018.js"><link rel="prefetch" href="/overcord/assets/js/21.0a7b487d.js"><link rel="prefetch" href="/overcord/assets/js/3.60419601.js"><link rel="prefetch" href="/overcord/assets/js/4.4d31d94d.js"><link rel="prefetch" href="/overcord/assets/js/5.4e7a2df9.js"><link rel="prefetch" href="/overcord/assets/js/6.498ab014.js"><link rel="prefetch" href="/overcord/assets/js/7.7e550121.js"><link rel="prefetch" href="/overcord/assets/js/8.4cbb4a35.js"><link rel="prefetch" href="/overcord/assets/js/9.b751af4a.js">
+    <link rel="stylesheet" href="/overcord/assets/css/0.styles.42309573.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/overcord/" class="home-link router-link-active"><!----> <span class="site-name">Overcord Guide</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/overcord/guide/" class="nav-link router-link-active">
+  Guide
+</a></div><div class="nav-item"><a href="/overcord/config/" class="nav-link">
+  Config
+</a></div><div class="nav-item"><a href="https://v1.vuepress.vuejs.org" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  VuePress
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/overcord/guide/" class="nav-link router-link-active">
+  Guide
+</a></div><div class="nav-item"><a href="/overcord/config/" class="nav-link">
+  Config
+</a></div><div class="nav-item"><a href="https://v1.vuepress.vuejs.org" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  VuePress
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>Guide</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/overcord/guide/" aria-current="page" class="sidebar-link">Overcord</a></li><li><a href="/overcord/guide/installing.html" class="sidebar-link">Installation</a></li><li><a href="/overcord/guide/setup.html" class="sidebar-link">Initial Setup</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>Commands</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/overcord/guide/commands/commands.html" aria-current="page" class="active sidebar-link">Commands</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/overcord/guide/commands/commands.html#creating-a-simple-command" class="sidebar-link">Creating a Simple Command</a></li><li class="sidebar-sub-header"><a href="/overcord/guide/commands/commands.html#commands-with-arguments" class="sidebar-link">Commands with Arguments</a></li></ul></li><li><a href="/overcord/guide/commands/decorators.html" class="sidebar-link">Command Decorators</a></li><li><a href="/overcord/guide/commands/arguments.html" class="sidebar-link">Arguments</a></li><li><a href="/overcord/guide/commands/overriding.html" class="sidebar-link">Built-in Command Methods</a></li><li><a href="/overcord/guide/commands/slashCommands.html" class="sidebar-link">Slash Commands</a></li><li><a href="/overcord/guide/commands/state.html" class="sidebar-link">State</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="commands"><a href="#commands" class="header-anchor">#</a> Commands</h1> <p>Commands are an essential part of Overcord. Commands allow you to create code
+that executes in response to users typing certain commands to your bot.</p> <div class="custom-block tip"><p class="custom-block-title">TIP</p> <p>Commands must be executed by typing your bots command prefix, followed by the
+command name. If you want more control over when code will execute, then
+creating an event may be necessary.</p></div> <h2 id="creating-a-simple-command"><a href="#creating-a-simple-command" class="header-anchor">#</a> Creating a Simple Command</h2> <p>Creating a command in Overcord is super simple. Start by creating a new file in
+your commands directory, <code>Hi.ts</code>.</p> <p>The following code will create a command that simply says 'hi' when the command
+<code>!hi</code> or <code>!hello</code> is used:</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">import</span> <span class="token punctuation">{</span> Alias<span class="token punctuation">,</span> Command<span class="token punctuation">,</span> Client <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">&quot;@frasermcc/overcord&quot;</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> Message <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">&quot;discord.js&quot;</span><span class="token punctuation">;</span>
+
+@<span class="token function">Alias</span><span class="token punctuation">(</span><span class="token string">&quot;hi&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;hello&quot;</span><span class="token punctuation">)</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">class</span> <span class="token class-name">HiCommand</span> <span class="token keyword">extends</span> <span class="token class-name">Command</span> <span class="token punctuation">{</span>
+    <span class="token keyword">async</span> <span class="token function">execute</span><span class="token punctuation">(</span>message<span class="token operator">:</span> Message<span class="token punctuation">,</span> client<span class="token operator">:</span> Client<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> message<span class="token punctuation">.</span>channel<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">&quot;Hi!&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><div class="custom-block warning"><p class="custom-block-title">WARNING</p> <p>Commands should always be the default export out of a file.</p></div> <ul><li>We use the <code>Alias</code> decorator to name a command. We can pass through any number
+of values, which must be unique amongst all other commands. Your command can be
+called by any of these names.</li> <li>We override the execute method to determine what should happen if the command
+is run successfully. The execute method exposes the message that invoked the
+command, as well as the client object.</li></ul> <h2 id="commands-with-arguments"><a href="#commands-with-arguments" class="header-anchor">#</a> Commands with Arguments</h2> <p>Overcord can be used to require arguments to your commands. Arguments are
+additional inputs beyond just typing the command name. In the following example,
+we'll create a command that takes a number as an argument, and returns that
+number minus 1.</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">import</span> <span class="token punctuation">{</span>
+    Alias<span class="token punctuation">,</span>
+    Command<span class="token punctuation">,</span>
+    Argument<span class="token punctuation">,</span>
+    IntegerType<span class="token punctuation">,</span>
+    Client<span class="token punctuation">,</span>
+<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">&quot;@frasermcc/overcord&quot;</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> Message <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">&quot;discord.js&quot;</span><span class="token punctuation">;</span>
+
+@<span class="token function">Alias</span><span class="token punctuation">(</span><span class="token string">&quot;subtractone&quot;</span><span class="token punctuation">)</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">class</span> <span class="token class-name">SubtractOneCommand</span> <span class="token keyword">extends</span> <span class="token class-name">Command</span> <span class="token punctuation">{</span>
+    @<span class="token function">Argument</span><span class="token punctuation">(</span><span class="token punctuation">{</span> <span class="token keyword">type</span><span class="token operator">:</span> <span class="token keyword">new</span> <span class="token class-name">IntegerType</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function-variable function">validate</span><span class="token operator">:</span> <span class="token punctuation">(</span>n<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token operator">!</span>n<span class="token punctuation">.</span><span class="token function">isNan</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+    someInteger<span class="token operator">!</span><span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">async</span> <span class="token function">execute</span><span class="token punctuation">(</span>message<span class="token operator">:</span> Message<span class="token punctuation">,</span> client<span class="token operator">:</span> Client<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> message<span class="token punctuation">.</span>channel<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Your number minus one is </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>someInteger <span class="token operator">-</span> <span class="token number">1</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">!</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>When a user invokes this command with <code>!subtractone 15</code>, the value <code>15</code> will be
+injected into the <code>someInteger</code> class field. You can then have access to this
+value in any method inside the command.</p> <p>In overcord, arguments are defined by using fields in a class. When the command
+is executed, the provided arguments will be injected into these fields <em>in order</em>. So if you have:</p> <div class="language-ts extra-class"><pre class="language-ts"><code>    @<span class="token function">Argument</span><span class="token punctuation">(</span><span class="token punctuation">{</span> <span class="token keyword">type</span><span class="token operator">:</span> <span class="token keyword">new</span> <span class="token class-name">IntegerType</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+    intOne<span class="token operator">!</span><span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">;</span>
+    @<span class="token function">Argument</span><span class="token punctuation">(</span><span class="token punctuation">{</span> <span class="token keyword">type</span><span class="token operator">:</span> <span class="token keyword">new</span> <span class="token class-name">IntegerType</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+    intTwo<span class="token operator">!</span><span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">;</span>
+</code></pre></div><p>...then the first argument typed out would be injected into intOne, and the second
+argument typed out would be injected into intTwo.</p> <p>For more information about arguments in Overcord, check out the guide page on
+Arguments.</p></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/overcord/guide/setup.html" class="prev">
+        Initial Setup
+      </a></span> <span class="next"><a href="/overcord/guide/commands/decorators.html">
+        Command Decorators
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/overcord/assets/js/app.58262fba.js" defer></script><script src="/overcord/assets/js/2.fda058ae.js" defer></script><script src="/overcord/assets/js/13.631a196f.js" defer></script>
+  </body>
+</html>
