@@ -165,11 +165,14 @@ export default abstract class AbstractCommand {
     if (promptText) {
       await sourceMessage.channel.send(promptText);
     }
-    const message = await sourceMessage.channel.awaitMessages((m) => m.author.id === sourceMessage.author.id, {
-      errors: ["time"],
+
+    const message = await sourceMessage.channel.awaitMessages({
+      filter: (m) => m.author.id === sourceMessage.author.id,
       max: 1,
+      time: secondsTimeout * 1000,
     });
     return message.first();
+
     // return new Promise<string>((res, rej) => {
     //     if (sourceMessage.channel.type === "news" || sourceMessage.channel instanceof NewsChannel) return rej();
     //     new MessageCollector(sourceMessage.channel, (m) => m.author.id === sourceMessage.author.id, {
@@ -186,7 +189,7 @@ export default abstract class AbstractCommand {
   protected readonly say = async (content: string | MessageEmbed) => {
     if (this._message) {
       if (typeof content === "string") return this._message.channel.send(content);
-      return this._message.channel.send({ embed: content });
+      return this._message.channel.send({ embeds: [content] });
     }
   };
 
