@@ -27,7 +27,7 @@
         "@frasermcc/log": "^1.0.0",
         "cli-progress": "^3.9.0",
         "colors": "^1.4.0",
-        "discord.js": "^12.5.1",
+        "discord.js": "^12.5.3",
         "dotenv": "^8.2.0",
         "prompts": "^2.4.1",
         "reflect-metadata": "^0.1.13",
