@@ -87,7 +87,7 @@ export class CommandRegistry {
     const commandMap = new Map<RegExp, StatefulCommand>();
     for await (const file of this.getFiles(directory)) {
       try {
-        if (/^(?!.*(d)\.ts$).*\.(ts|js)$/.test(file[0]) !== true) {
+        if (/^(?!.*(\.d)\.ts$).*\.(ts|js)$/.test(file[0]) !== true) {
           //invalidFileFound(file[0]);
           continue;
         }
@@ -172,7 +172,7 @@ export class CommandRegistry {
     if (!existsSync(directory)) return eventMap;
     for await (const file of this.getFiles(directory)) {
       try {
-        if (/^(?!.*(d)\.ts$).*\.(ts|js)$/.test(file[0])) {
+        if (/^(?!.*(\.d)\.ts$).*\.(ts|js)$/.test(file[0])) {
           const root =
             file[1]
               .replace(directory, "")
