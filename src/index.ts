@@ -13,6 +13,7 @@ import { LogEntry, Logger, FullLogEntry } from "./util/LoggingMixin";
 import Stateful, { State } from "./commands/state/Stateful";
 import SlashCommand from "./commands/slash/SlashCommand";
 import { Named, Described, Domain } from "./commands/slash/SlashCommandDecorators";
+import PathArgument from "./commands/arguments/PathArgument";
 
 export {
   BooleanType,
@@ -49,6 +50,7 @@ export {
   Named,
   Described,
   Domain,
+  PathArgument,
 };
 
 (async () => {

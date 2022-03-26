@@ -3,6 +3,7 @@ import { Message, MessageCollector, MessageEmbed, NewsChannel } from "discord.js
 import Client from "../client/Client";
 import { AliasManager } from "./alias/Alias";
 import { clearArguments, setArguments } from "./arguments/Argument";
+import { setPathArgs } from "./arguments/PathArgument";
 import CommandInhibitor from "./inhibitor/CommandInhibitor";
 import { PermissionManager } from "./permissions/Permit";
 import { setState } from "./state/Stateful";
@@ -19,6 +20,7 @@ export default abstract class AbstractCommand {
     inhibitor,
     permissionManager,
     client,
+    causingRegex,
   }: CommandHandlerArgs): Promise<void> => {
     const shouldExecute = this.internalCommandShouldExecute(message, fragments, aliasManager);
     if (!shouldExecute) return;
@@ -28,6 +30,8 @@ export default abstract class AbstractCommand {
 
     const argumentErrors = await setArguments(this, message, ...fragments.slice(1));
     if (argumentErrors) return this.commandDidShowHelp(message, ...argumentErrors);
+
+    await setPathArgs(this, fragments[0], causingRegex);
 
     setState(this, message);
 
@@ -112,7 +116,7 @@ export default abstract class AbstractCommand {
 
   protected async log(client: Client, message: Message, aliasManager?: AliasManager) {
     await client.logger?.log({
-      command: aliasManager?.aliases ? aliasManager.aliases[0] : "",
+      command: aliasManager?.aliases ? aliasManager.aliases[0].source : "",
       guild: message.guild ?? undefined,
       invokingUser: message.author,
       message: message,
@@ -232,4 +236,5 @@ interface CommandHandlerArgs {
   inhibitor?: CommandInhibitor;
   aliasManager?: AliasManager;
   permissionManager?: PermissionManager;
+  causingRegex: RegExp;
 }

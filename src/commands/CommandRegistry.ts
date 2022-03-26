@@ -21,7 +21,7 @@ export class CommandRegistry {
    * command object. Each alias has its own entry. Aliases of the same command
    * will point to the same StatefulCommand object.
    */
-  private _commandMap = new Map<string, StatefulCommand>();
+  private _commandMap = new Map<RegExp, StatefulCommand>();
   private _eventMap = new Map<string, DiscordEvent<any>[]>();
   // module <=> description
   private _groupSet = new Map<string, string | null>();
@@ -39,7 +39,16 @@ export class CommandRegistry {
 
   executeCommand(args: { fragments: string[]; message: Message }) {
     const commandName = args.fragments[0].toLowerCase();
-    const statefulCommand = this._commandMap.get(commandName);
+
+    const [regex, statefulCommand] = (() => {
+      for (const [key, value] of this._commandMap) {
+        if (key.test(commandName)) {
+          return [key, value] as const;
+        }
+      }
+      return [undefined, undefined];
+    })();
+
     if (!statefulCommand) return;
 
     const group = statefulCommand.group;
@@ -55,6 +64,7 @@ export class CommandRegistry {
       aliasManager: statefulCommand.aliases,
       permissionManager: statefulCommand.permissionManager,
       client: this.client,
+      causingRegex: regex!,
     });
   }
 
@@ -70,11 +80,11 @@ export class CommandRegistry {
     }
   }
 
-  private async getCommands(directory: string): Promise<Map<string, StatefulCommand>> {
+  private async getCommands(directory: string): Promise<Map<RegExp, StatefulCommand>> {
     const invalidFileFound = (file: string) =>
-      Log.warn(`Found file ${file} in command directory that is not a command.`);
+      Log.warn(`Found file ${file} in command directory that is not a command. Are you missing a default export?`);
 
-    const commandMap = new Map<string, StatefulCommand>();
+    const commandMap = new Map<RegExp, StatefulCommand>();
     for await (const file of this.getFiles(directory)) {
       try {
         if (/^(?!.*(d)\.ts$).*\.(ts|js)$/.test(file[0]) !== true) {
@@ -116,9 +126,11 @@ export class CommandRegistry {
         const [command, aliases] = this.parseMetadata(required, root);
 
         aliases?.forEach((alias) => {
-          alias = alias.toLowerCase();
-          commandMap.has(alias) &&
-            Log.critical(`Multiple commands exist with alias ${alias}. Please ensure all commands are uniquely named.`);
+          if (commandMap.has(alias)) {
+            Log.error(`Multiple commands exist with alias ${alias}. Please ensure all commands are uniquely named.`);
+            Log.error(`The command in ${file[0]} will not be added.`);
+          }
+
           commandMap.set(alias, command);
         });
       } catch (e) {

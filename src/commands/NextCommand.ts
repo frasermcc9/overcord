@@ -170,7 +170,7 @@ export default abstract class NextCommand {
 
   protected async log(client: Client, message: Message, aliasManager?: AliasManager) {
     await client.logger?.log({
-      command: aliasManager?.aliases ? aliasManager.aliases[0] : "",
+      command: aliasManager?.aliases ? aliasManager.aliases[0].source : "",
       guild: message.guild ?? undefined,
       invokingUser: message.author,
       message: message,
